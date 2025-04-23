@@ -4,6 +4,7 @@ import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
+import { navigate } from '../navigation/navigationRef';
 
 // https://docs.expo.dev/versions/latest/sdk/notifications/
 
@@ -39,6 +40,10 @@ export function usePushNotifications() {
     // 監聽通知回應
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
       console.log('使用者互動的通知：', response);
+      const post = response.notification.request.content.data.post;
+      if (post) {
+        navigate('Detail', { post }); // ✅ 直接導頁！
+      }
     });
 
     return () => {

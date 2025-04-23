@@ -23,6 +23,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "4a4bf6c2-bfba-4071-9f6f-3014b76069af"
+      }
+    },
+    "owner": "wuyen"
   }
 }
