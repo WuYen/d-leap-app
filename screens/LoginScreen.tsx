@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, Button, Alert, ActivityIndicator } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import api from '../utils/api';
 import { saveAccount, saveJwtToken, getAccount } from '../utils/storage';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 
+type RootStackParamList = {
+  List: undefined;
+};
+
 const LoginScreen = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [account, setAccount] = useState('');
   const [inputMode, setInputMode] = useState(false); // 要不要進入輸入模式
-  const navigation = useNavigation();
   const { expoPushToken } = usePushNotifications();
 
   useEffect(() => {
@@ -37,11 +41,12 @@ const LoginScreen = () => {
   }, [expoPushToken]);
 
   const login = async (account: string, pushToken: string) => {
-    const res = await api.post<{ token: string }>('/login-expo-user', {
+    const res = await api.post<{ message: string; data: { token: string } }>('/login/expo', {
       account,
       pushToken,
     });
-    const jwtToken = res.token;
+
+    const jwtToken = res.data.token;
     await saveAccount(account);
     await saveJwtToken(jwtToken);
     console.log('✅ 登入成功');
@@ -49,7 +54,7 @@ const LoginScreen = () => {
 
   const handleRegister = async () => {
     try {
-      await api.post('/expo-token', { account, pushToken: expoPushToken });
+      await api.post('/login/expo/register', { account, pushToken: expoPushToken });
       Alert.alert('註冊成功 ✨', '推播token已經綁定！');
 
       // 註冊完可以直接自動登入
@@ -65,7 +70,7 @@ const LoginScreen = () => {
     // 還在嘗試自動登入，不顯示輸入框
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size='large' />
       </View>
     );
   }
@@ -73,12 +78,12 @@ const LoginScreen = () => {
   return (
     <View style={{ flex: 1, justifyContent: 'center', padding: 20 }}>
       <TextInput
-        placeholder="輸入帳號"
+        placeholder='輸入帳號'
         value={account}
         onChangeText={setAccount}
         style={{ borderBottomWidth: 1, marginBottom: 20 }}
       />
-      <Button title="註冊並登入" onPress={handleRegister} />
+      <Button title='註冊並登入' onPress={handleRegister} />
     </View>
   );
 };

@@ -32,27 +32,27 @@ export function usePushNotifications() {
       if (token) {
         setExpoPushToken(token);
 
-        try {
-          const account = await getAccount();
-          if (account) {
-            await api.post('/expo-token', { account, pushToken: token });
-            console.log('✅ Expo Push Token 綁定成功');
-          } else {
-            console.log('⚠️ 尚未登入，跳過Push Token綁定');
-          }
-        } catch (error) {
-          console.error('❌ Expo Push Token 綁定失敗', error);
-        }
+        // try {
+        //   const account = await getAccount();
+        //   if (account) {
+        //     await api.post('/expo-token', { account, pushToken: token });
+        //     console.log('✅ Expo Push Token 綁定成功');
+        //   } else {
+        //     console.log('⚠️ 尚未登入，跳過Push Token綁定');
+        //   }
+        // } catch (error) {
+        //   console.error('❌ Expo Push Token 綁定失敗', error);
+        // }
       }
     });
 
     // 監聽接收到的通知
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+    notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
       setNotification(notification);
     });
 
     // 監聽通知回應
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
       console.log('使用者互動的通知：', response);
       const post = response.notification.request.content.data.post;
       if (post) {
@@ -104,8 +104,7 @@ async function registerForPushNotificationsAsync(): Promise<string | null> {
   }
 
   try {
-    const projectId =
-      Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
+    const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
     if (!projectId) {
       throw new Error('找不到 Project ID');
     }
