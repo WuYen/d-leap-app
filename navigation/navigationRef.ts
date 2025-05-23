@@ -1,6 +1,6 @@
 // navigation/navigationRef.ts
 import { createNavigationContainerRef } from '@react-navigation/native';
-import { RootStackParamList } from '../AppNavigator';
+import { RootStackParamList } from './types';
 
 // 建立一個 navigation 控制器（ref）
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();

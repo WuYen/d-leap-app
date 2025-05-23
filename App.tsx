@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet, Alert } from 'react-native';
-import AppNavigator from './AppNavigator';
+import AppNavigator from './navigation/AppNavigator';
 import { usePushNotifications } from './hooks/usePushNotifications';
 import { navigationRef } from './navigation/navigationRef';
 import api from './utils/api';

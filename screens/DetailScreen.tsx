@@ -2,7 +2,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../AppNavigator';
+import { RootStackParamList } from '../navigation/types';
 import PostDetailCard from '../components/PostDetailCard';
 
 type DetailRouteProp = RouteProp<RootStackParamList, 'Detail'>;
