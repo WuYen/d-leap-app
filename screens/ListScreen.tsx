@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../AppNavigator';
+import { RootStackParamList } from '../navigation/types';
 import { PostItem } from '../types/PostItem';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'List'>;
@@ -12,7 +12,8 @@ export default function ListScreen() {
     const [posts, setPosts] = useState<PostItem[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
+    const loadPosts = () => {
+        setLoading(true);
         fetch('https://monneey-fe846abf0722.herokuapp.com/ptt/posts')
             .then((res) => res.json())
             .then((json) => {
@@ -23,18 +24,18 @@ export default function ListScreen() {
                 console.error('Fetch failed:', err);
                 setLoading(false);
             });
+    };
+
+    useEffect(() => {
+        loadPosts();
     }, []);
 
-    if (loading) {
-        return (
-            <View style={styles.loader}>
-                <ActivityIndicator size="large" />
-                <Text>載入中...</Text>
-            </View>
-        );
-    }
 
-    return (
+    return loading ?
+        <View style={styles.loader}>
+            <ActivityIndicator size="large" />
+            <Text>載入中...</Text>
+        </View> :
         <FlatList
             contentContainerStyle={styles.container}
             data={posts}
@@ -47,12 +48,14 @@ export default function ListScreen() {
                     <Text style={styles.title}>[{item.tag}] {item.title}</Text>
                 </TouchableOpacity>
             )}
+            refreshing={loading}
+            onRefresh={loadPosts}
         />
-    );
 }
 
 const styles = StyleSheet.create({
     container: {
+        flexGrow: 1,
         padding: 16,
     },
     card: {
@@ -71,3 +74,4 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 });
+
