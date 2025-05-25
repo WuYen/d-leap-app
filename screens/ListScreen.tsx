@@ -5,6 +5,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import { PostItem } from '../types/PostItem';
 import api from '../utils/api';
+import RankAuthorList from '../components/RankAuthorList';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'List'>;
 
@@ -12,6 +13,7 @@ export default function ListScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [posts, setPosts] = useState<PostItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedTab, setSelectedTab] = useState<'rank' | 'list'>('rank');
 
   const loadPosts = async () => {
     setLoading(true);
@@ -36,23 +38,40 @@ export default function ListScreen() {
       <Text>載入中...</Text>
     </View>
   ) : (
-    <FlatList
-      contentContainerStyle={styles.container}
-      data={posts}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
+    <>
+      <View style={styles.tabRow}>
         <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigation.navigate('Detail', { post: item })} // 👈 傳整個物件
+          style={[styles.tabBtn, selectedTab === 'rank' && styles.tabBtnActive]}
+          onPress={() => setSelectedTab('rank')}
         >
-          <Text style={styles.title}>
-            [{item.tag}] {item.title}
-          </Text>
+          <Text style={selectedTab === 'rank' ? styles.tabTextActive : styles.tabText}>排行榜</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tabBtn, selectedTab === 'list' && styles.tabBtnActive]}
+          onPress={() => setSelectedTab('list')}
+        >
+          <Text style={selectedTab === 'list' ? styles.tabTextActive : styles.tabText}>文章列表</Text>
+        </TouchableOpacity>
+      </View>
+      {selectedTab === 'rank' ? (
+        <RankAuthorList />
+      ) : (
+        <FlatList
+          contentContainerStyle={styles.container}
+          data={posts}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Detail', { post: item })}>
+              <Text style={styles.title}>
+                [{item.tag}] {item.title}
+              </Text>
+            </TouchableOpacity>
+          )}
+          refreshing={loading}
+          onRefresh={loadPosts}
+        />
       )}
-      refreshing={loading}
-      onRefresh={loadPosts}
-    />
+    </>
   );
 }
 
@@ -75,5 +94,29 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  tabRow: {
+    flexDirection: 'row',
+    marginBottom: 8,
+    backgroundColor: '#e3f2fd',
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  tabBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    alignItems: 'center',
+    backgroundColor: '#e3f2fd',
+  },
+  tabBtnActive: {
+    backgroundColor: '#1976d2',
+  },
+  tabText: {
+    color: '#1976d2',
+    fontWeight: '600',
+  },
+  tabTextActive: {
+    color: '#fff',
+    fontWeight: '700',
   },
 });
