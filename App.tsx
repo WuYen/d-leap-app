@@ -1,11 +1,10 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import AppNavigator from './navigation/AppNavigator';
 import { usePushNotifications } from './hooks/usePushNotifications';
 import { navigationRef } from './navigation/navigationRef';
 import api from './utils/api';
 import { clearStorage } from './utils/storage';
-import { NavigationContainer } from '@react-navigation/native';
 
 export default function App() {
   const { expoPushToken } = usePushNotifications();
@@ -32,16 +31,14 @@ export default function App() {
   return (
     <View style={styles.container}>
       {/* 全域操作按鈕 */}
-      <View style={styles.globalButtons}>
+      {/* <View style={styles.globalButtons}>
         <Button title='登出' onPress={handleLogout} />
         <Button title='測試Ping' onPress={handlePing} />
-      </View>
+      </View> */}
 
       {/* 導航主畫面 */}
       <View style={styles.navigator}>
-        <NavigationContainer ref={navigationRef}>
-          <AppNavigator />
-        </NavigationContainer>
+        <AppNavigator />
       </View>
 
       {/* 推播 Token 區塊 */}
