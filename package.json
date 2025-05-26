@@ -7,7 +7,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "app": "npx expo start --tunnel"
+    "app": "npx expo start --tunnel",
+    "app-android": "npx expo start --android"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.23.1",
