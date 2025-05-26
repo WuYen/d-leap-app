@@ -1,22 +1,47 @@
-import React from 'react';
-import { View, Text, StyleSheet, Alert, Button } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Alert, Button, ActivityIndicator } from 'react-native';
 import AppNavigator from './navigation/AppNavigator';
 import { usePushNotifications } from './hooks/usePushNotifications';
 import { navigationRef } from './navigation/navigationRef';
 import api from './utils/api';
-import { clearStorage } from './utils/storage';
+import { getAccount, clearStorage } from './utils/storage';
 
 export default function App() {
   const { expoPushToken } = usePushNotifications();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const tryAutoLogin = async () => {
+      const savedAccount = await getAccount();
+      if (savedAccount && expoPushToken) {
+        setIsLoggedIn(true);
+      }
+      setIsLoading(false);
+    };
+
+    if (expoPushToken) tryAutoLogin();
+  }, [expoPushToken]);
+
+  if (isLoading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       {/* 全域操作按鈕 */}
-      {/* <DevPanel /> */}
-      
+      {/* <DevPanel onLogout={() => setIsLoggedIn(false)} /> */}
+
       {/* 導航主畫面 */}
       <View style={styles.navigator}>
-        <AppNavigator />
+        <AppNavigator
+          isLoggedIn={isLoggedIn}
+          onLoginSuccess={() => setIsLoggedIn(true)}
+        />
       </View>
 
       {/* 推播 Token 區塊 */}
@@ -30,7 +55,11 @@ export default function App() {
   );
 }
 
-function DevPanel() {
+type DevPanelProps = {
+  onLogout: () => void;
+};
+
+function DevPanel({ onLogout }: DevPanelProps) {
 
   const handleLogout = async () => {
     await clearStorage();
@@ -82,5 +111,10 @@ const styles = StyleSheet.create({
   tokenText: {
     fontSize: 12,
     fontFamily: 'monospace',
+  },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

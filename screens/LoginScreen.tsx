@@ -1,76 +1,59 @@
+// LoginScreen.tsx
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, Button, Alert, ActivityIndicator } from 'react-native';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
 import api from '../utils/api';
 import { saveAccount, saveJwtToken, getAccount } from '../utils/storage';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 
-type RootStackParamList = {
-  List: undefined;
+type Props = {
+  onLoginSuccess: () => void;
 };
 
-const LoginScreen = () => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+export default function LoginScreen({ onLoginSuccess }: Props) {
   const [account, setAccount] = useState('');
-  const [inputMode, setInputMode] = useState(false); // 要不要進入輸入模式
+  const [inputMode, setInputMode] = useState(false);
   const { expoPushToken } = usePushNotifications();
 
   useEffect(() => {
     const tryAutoLogin = async () => {
       const savedAccount = await getAccount();
-
       if (savedAccount && expoPushToken) {
-        console.log('🔄 嘗試自動登入中...');
         try {
           await login(savedAccount, expoPushToken);
-          navigation.navigate('List');
-        } catch (error) {
-          console.error('自動登入失敗', error);
-          Alert.alert('登入失敗 ❌', '請重新登入');
+          onLoginSuccess();
+        } catch {
+          Alert.alert('自動登入失敗', '請重新登入');
           setInputMode(true);
         }
       } else {
-        // 沒帳號，需要使用者自己輸入
         setInputMode(true);
       }
     };
 
-    if (expoPushToken) {
-      tryAutoLogin();
-    }
+    if (expoPushToken) tryAutoLogin();
   }, [expoPushToken]);
 
-  const login = async (account: string, pushToken: string) => {
-    const res = await api.post<{ message: string; data: { token: string } }>('/login/expo', {
-      account,
-      pushToken,
-    });
-
-    const jwtToken = res.data.token;
+  const login = async (account: string, token: string) => {
+    const res = await api.post('/login/expo', { account, pushToken: token });
     await saveAccount(account);
-    await saveJwtToken(jwtToken);
-    console.log('✅ 登入成功');
+    await saveJwtToken(res.data.token);
   };
 
   const handleRegister = async () => {
     try {
       await api.post('/login/expo/register', { account, pushToken: expoPushToken });
-      Alert.alert('註冊成功 ✨', '推播token已經綁定！');
-
-      // 註冊完可以直接自動登入
+      Alert.alert('註冊成功！');
       await login(account, expoPushToken!);
-      navigation.navigate('List');
-    } catch (error) {
-      console.error('註冊失敗', error);
-      Alert.alert('註冊失敗 ❌', '請確認帳號或推播資訊');
+      onLoginSuccess();
+    } catch {
+      Alert.alert('錯誤', '註冊失敗');
     }
   };
 
   if (!inputMode) {
-    // 還在嘗試自動登入，不顯示輸入框
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size='large' />
+        <ActivityIndicator size="large" />
       </View>
     );
   }
@@ -78,14 +61,12 @@ const LoginScreen = () => {
   return (
     <View style={{ flex: 1, justifyContent: 'center', padding: 20 }}>
       <TextInput
-        placeholder='輸入帳號'
+        placeholder="輸入帳號"
         value={account}
         onChangeText={setAccount}
         style={{ borderBottomWidth: 1, marginBottom: 20 }}
       />
-      <Button title='註冊並登入' onPress={handleRegister} />
+      <Button title="註冊並登入" onPress={handleRegister} />
     </View>
   );
-};
-
-export default LoginScreen;
+}
