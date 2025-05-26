@@ -13,6 +13,7 @@ export default function App() {
 
   useEffect(() => {
     const tryAutoLogin = async () => {
+      console.log('Trying auto login...');
       const savedAccount = await getAccount();
       if (savedAccount && expoPushToken) {
         setIsLoggedIn(true);
@@ -20,13 +21,19 @@ export default function App() {
       setIsLoading(false);
     };
 
+    //TODO: 這邊 如果在虛擬機 上執行，expoPushToken 會是 undefined, 就不會關閉loading and loggin status 也不會登入
     if (expoPushToken) tryAutoLogin();
+    setTimeout(() => {
+      setIsLoading(false);
+      setIsLoggedIn(true);
+      console.log('Force close loading state after 5 seconds');
+    }, 5000);
   }, [expoPushToken]);
 
   if (isLoading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size='large' />
       </View>
     );
   }
@@ -34,14 +41,11 @@ export default function App() {
   return (
     <View style={styles.container}>
       {/* 全域操作按鈕 */}
-      {/* <DevPanel onLogout={() => setIsLoggedIn(false)} /> */}
+      <DevPanel onLogout={() => setIsLoggedIn(false)} />
 
       {/* 導航主畫面 */}
       <View style={styles.navigator}>
-        <AppNavigator
-          isLoggedIn={isLoggedIn}
-          onLoginSuccess={() => setIsLoggedIn(true)}
-        />
+        <AppNavigator isLoggedIn={isLoggedIn} onLoginSuccess={() => setIsLoggedIn(true)} />
       </View>
 
       {/* 推播 Token 區塊 */}
@@ -60,7 +64,6 @@ type DevPanelProps = {
 };
 
 function DevPanel({ onLogout }: DevPanelProps) {
-
   const handleLogout = async () => {
     await clearStorage();
     Alert.alert('登出成功');
@@ -80,10 +83,12 @@ function DevPanel({ onLogout }: DevPanelProps) {
     }
   };
 
-  return <View style={styles.globalButtons}>
-    <Button title='登出' onPress={handleLogout} />
-    <Button title='測試Ping' onPress={handlePing} />
-  </View>
+  return (
+    <View style={styles.globalButtons}>
+      <Button title='登出' onPress={handleLogout} />
+      <Button title='測試Ping' onPress={handlePing} />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

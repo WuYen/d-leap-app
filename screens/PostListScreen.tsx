@@ -5,7 +5,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import { PostItem } from '../types/PostItem';
 import api from '../utils/api';
-import RankAuthorList from '../components/RankAuthorList';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'List'>;
 
@@ -54,7 +53,7 @@ export default function ListScreen() {
         </TouchableOpacity>
       </View>
       {selectedTab === 'rank' ? (
-        <RankAuthorList />
+        <Text style={{ padding: 16, textAlign: 'center' }}>排行榜功能尚未實作，敬請期待！</Text>
       ) : (
         <FlatList
           contentContainerStyle={styles.container}
