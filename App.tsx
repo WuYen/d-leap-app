@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert, Button } from 'react-native';
 import AppNavigator from './navigation/AppNavigator';
 import { usePushNotifications } from './hooks/usePushNotifications';
 import { navigationRef } from './navigation/navigationRef';
@@ -8,6 +8,29 @@ import { clearStorage } from './utils/storage';
 
 export default function App() {
   const { expoPushToken } = usePushNotifications();
+
+  return (
+    <View style={styles.container}>
+      {/* 全域操作按鈕 */}
+      {/* <DevPanel /> */}
+      
+      {/* 導航主畫面 */}
+      <View style={styles.navigator}>
+        <AppNavigator />
+      </View>
+
+      {/* 推播 Token 區塊 */}
+      <View style={styles.tokenContainer}>
+        <Text style={styles.label}>Expo Push Token:</Text>
+        <Text selectable style={styles.tokenText}>
+          {expoPushToken || 'Loading.......'}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+function DevPanel() {
 
   const handleLogout = async () => {
     await clearStorage();
@@ -28,28 +51,10 @@ export default function App() {
     }
   };
 
-  return (
-    <View style={styles.container}>
-      {/* 全域操作按鈕 */}
-      {/* <View style={styles.globalButtons}>
-        <Button title='登出' onPress={handleLogout} />
-        <Button title='測試Ping' onPress={handlePing} />
-      </View> */}
-
-      {/* 導航主畫面 */}
-      <View style={styles.navigator}>
-        <AppNavigator />
-      </View>
-
-      {/* 推播 Token 區塊 */}
-      <View style={styles.tokenContainer}>
-        <Text style={styles.label}>Expo Push Token:</Text>
-        <Text selectable style={styles.tokenText}>
-          {expoPushToken || 'Loading.......'}
-        </Text>
-      </View>
-    </View>
-  );
+  return <View style={styles.globalButtons}>
+    <Button title='登出' onPress={handleLogout} />
+    <Button title='測試Ping' onPress={handlePing} />
+  </View>
 }
 
 const styles = StyleSheet.create({
