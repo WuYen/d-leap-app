@@ -1,14 +1,12 @@
 // screens/DetailScreen.tsx
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useRoute, RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../navigation/types';
-import PostDetailCard from '../components/PostDetailCard';
 
-type DetailRouteProp = RouteProp<RootStackParamList, 'Detail'>;
+import PostDetailCard from '../components/PostDetailCard';
+import { usePostRoute, ROUTES } from '../navigation';
 
 export default function DetailScreen() {
-  const route = useRoute<DetailRouteProp>();
+  const route = usePostRoute<typeof ROUTES.Post.PostDetail>(); // ✅ 型別安全補完
   const { post } = route.params;
 
   return (

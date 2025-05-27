@@ -1,7 +1,8 @@
 // components/RankAuthorList.tsx
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import api from '../utils/api';
+import { ROUTES, useAuthorNavigation } from '../navigation';
 
 interface LeaderboardPost {
   title: string;
@@ -36,7 +37,8 @@ interface LeaderboardItem {
   dislikes: number;
 }
 
-export default function RankAuthorList() {
+export default function AuthorListScreen() {
+  const navigation = useAuthorNavigation();
   const [data, setData] = useState<LeaderboardItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -59,7 +61,7 @@ export default function RankAuthorList() {
   if (loading) {
     return (
       <View style={styles.loader}>
-        <ActivityIndicator size='large' />
+        <ActivityIndicator size="large" />
         <Text>載入排行榜中...</Text>
       </View>
     );
@@ -71,7 +73,10 @@ export default function RankAuthorList() {
       data={data}
       keyExtractor={(item) => item.name}
       renderItem={({ item }) => (
-        <View style={styles.card}>
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() => navigation.navigate(ROUTES.Author.AuthorDetail, { author: item })}
+        >
           <Text style={styles.name}>{item.name}</Text>
           <Text style={styles.score}>分數: {item.score.toFixed(2)}</Text>
           <Text style={styles.stats}>
@@ -90,7 +95,7 @@ export default function RankAuthorList() {
               </Text>
             </View>
           ))}
-        </View>
+        </TouchableOpacity>
       )}
     />
   );

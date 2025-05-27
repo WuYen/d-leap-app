@@ -1,13 +1,28 @@
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { NavigatorScreenParams } from '@react-navigation/native';
+import { ROUTES } from './routes';
 
-// PostItem 型別（從 PostItem.ts 引入）
-import { PostItem } from '../types/PostItem';
-
-export type RootStackParamList = {
-  List: undefined;
-  Detail: { post: PostItem };
+export type PostStackParamList = {
+  [ROUTES.Post.PostList]: undefined;
+  [ROUTES.Post.PostDetail]: { post: any };
 };
 
-// 泛型型別：根據畫面名稱取得對應的 NavigationProp
-export type NavigationProps<RouteName extends keyof RootStackParamList> =
-  NativeStackNavigationProp<RootStackParamList, RouteName>;
+export type FavoriteStackParamList = {
+  [ROUTES.Favorite.FavoriteList]: undefined;
+  [ROUTES.Favorite.FavoriteDetail]: { item: any };
+};
+
+export type AuthorStackParamList = {
+  [ROUTES.Author.AuthorList]: undefined;
+  [ROUTES.Author.AuthorDetail]: { author: any };
+};
+
+export type RootTabParamList = {
+  [ROUTES.Tab.Post]: NavigatorScreenParams<PostStackParamList>;
+  [ROUTES.Tab.Favorite]: NavigatorScreenParams<FavoriteStackParamList>;
+  [ROUTES.Tab.Author]: NavigatorScreenParams<AuthorStackParamList>;
+};
+
+export type RootStackParamList = {
+  [ROUTES.Root.MainTabs]: NavigatorScreenParams<RootTabParamList>;
+  [ROUTES.Root.Register]: undefined;
+};

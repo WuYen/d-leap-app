@@ -1,21 +1,18 @@
-// PostStack.tsx
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { ROUTES } from '../routes';
+import type { PostStackParamList } from '../types';
+
 import PostListScreen from '../../screens/PostListScreen';
 import PostDetailScreen from '../../screens/PostDetailScreen';
-
-export type PostStackParamList = {
-  PostList: undefined;
-  PostDetail: { post: any }; // 替換成你的 PostItem 類型
-};
 
 const Stack = createNativeStackNavigator<PostStackParamList>();
 
 export default function PostStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="PostList" component={PostListScreen} options={{ title: '貼文列表' }} />
-      <Stack.Screen name="PostDetail" component={PostDetailScreen} options={{ title: '貼文內容' }} />
+      <Stack.Screen name={ROUTES.Post.PostList} component={PostListScreen} options={{ title: '貼文列表' }} />
+      <Stack.Screen name={ROUTES.Post.PostDetail} component={PostDetailScreen} options={{ title: '貼文內容' }} />
     </Stack.Navigator>
   );
 }

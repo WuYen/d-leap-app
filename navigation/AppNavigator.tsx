@@ -1,43 +1,43 @@
-// AppNavigator.tsx
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { ROUTES } from './routes';
+import type { RootStackParamList, RootTabParamList } from './types';
 
 import RegisterScreen from '../screens/RegisterScreen';
-import PostStack from './stake/PostStack';
-import FavoriteStack from './stake/FavoriteStack';
-import AuthorStack from './stake/AuthorStack';
+import PostStack from './stack/PostStack';
+import FavoriteStack from './stack/FavoriteStack';
+import AuthorStack from './stack/AuthorStack';
 
-const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
+const RootStack = createNativeStackNavigator<RootStackParamList>();
+const Tab = createBottomTabNavigator<RootTabParamList>();
 
 type Props = {
   isLoggedIn: boolean;
   onSetIsLoggedIn: (isLoggedIn: boolean) => void;
 };
 
-// ✅ Bottom Tabs (整合在這個檔案)
 const MainTabs = () => (
-  <Tab.Navigator initialRouteName="貼文" screenOptions={{ headerShown: false }}>
-    <Tab.Screen name="貼文" component={PostStack} />
-    <Tab.Screen name="收藏" component={FavoriteStack} />
-    <Tab.Screen name="作者" component={AuthorStack} />
+  <Tab.Navigator screenOptions={{ headerShown: false }}>
+    <Tab.Screen name={ROUTES.Tab.Post} component={PostStack} options={{ tabBarLabel: '貼文' }} />
+    <Tab.Screen name={ROUTES.Tab.Favorite} component={FavoriteStack} options={{ tabBarLabel: '收藏' }} />
+    <Tab.Screen name={ROUTES.Tab.Author} component={AuthorStack} options={{ tabBarLabel: '作者' }} />
   </Tab.Navigator>
 );
 
 export default function AppNavigator({ isLoggedIn, onSetIsLoggedIn }: Props) {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <RootStack.Navigator screenOptions={{ headerShown: false }}>
         {isLoggedIn ? (
-          <Stack.Screen name="MainTabs" component={MainTabs} />
+          <RootStack.Screen name={ROUTES.Root.MainTabs} component={MainTabs} />
         ) : (
-          <Stack.Screen name="Register">
+          <RootStack.Screen name={ROUTES.Root.Register}>
             {(props) => <RegisterScreen {...props} onSetIsLoggedIn={onSetIsLoggedIn} />}
-          </Stack.Screen>
+          </RootStack.Screen>
         )}
-      </Stack.Navigator>
+      </RootStack.Navigator>
     </NavigationContainer>
   );
 }
