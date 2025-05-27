@@ -8,9 +8,12 @@ type Props = {
 };
 
 export default function PostDetailCard({ post }: Props) {
+  //TODO: 打開網頁
   return (
     <View style={styles.card}>
-      <Text style={styles.title}>[{post.tag}] {post.title}</Text>
+      <Text style={styles.title}>
+        [{post.tag}] {post.title}
+      </Text>
       <Text style={styles.info}>作者：{post.author}</Text>
       <Text style={styles.info}>日期：{post.date}</Text>
       <Text style={styles.info}>連結：{post.href}</Text>

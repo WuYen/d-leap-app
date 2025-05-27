@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import api from '../utils/api';
 import { ROUTES, useAuthorNavigation } from '../navigation';
+import AuthorCard from '../components/AuthorCard';
 
-interface LeaderboardPost {
+export interface LeaderboardPost {
   title: string;
   href: string;
   date: string;
@@ -19,7 +20,7 @@ interface LeaderboardPost {
   _id: string;
 }
 
-interface LeaderboardItem {
+export interface LeaderboardItem {
   name: string;
   mean: number;
   maxRate: number;
@@ -61,7 +62,7 @@ export default function AuthorListScreen() {
   if (loading) {
     return (
       <View style={styles.loader}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size='large' />
         <Text>載入排行榜中...</Text>
       </View>
     );
@@ -72,31 +73,7 @@ export default function AuthorListScreen() {
       contentContainerStyle={styles.container}
       data={data}
       keyExtractor={(item) => item.name}
-      renderItem={({ item }) => (
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigation.navigate(ROUTES.Author.AuthorDetail, { author: item })}
-        >
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.score}>分數: {item.score.toFixed(2)}</Text>
-          <Text style={styles.stats}>
-            平均: {item.mean.toFixed(2)} 最高: {item.maxRate.toFixed(2)} 最低: {item.minRate.toFixed(2)} 中位:{' '}
-            {item.median.toFixed(2)}
-          </Text>
-          <Text style={styles.stats}>
-            標準差: {item.stdDev.toFixed(2)} 總報酬: {item.totalRate.toFixed(2)}
-          </Text>
-          <Text style={styles.postsTitle}>代表文章:</Text>
-          {item.posts.map((post) => (
-            <View key={post.id} style={styles.postItem}>
-              <Text style={styles.postTitle}>{post.title}</Text>
-              <Text style={styles.postInfo}>
-                日期: {post.date} 報酬: {post.highest.diffPercent.toFixed(2)}%
-              </Text>
-            </View>
-          ))}
-        </TouchableOpacity>
-      )}
+      renderItem={({ item }) => <AuthorCard author={item} />}
     />
   );
 }
@@ -110,43 +87,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  card: {
-    backgroundColor: '#e3f2fd',
-    padding: 16,
-    marginBottom: 16,
-    borderRadius: 10,
-    elevation: 2,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1976d2',
-  },
-  score: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  stats: {
-    fontSize: 13,
-    color: '#333',
-  },
-  postsTitle: {
-    marginTop: 8,
-    fontWeight: '600',
-    color: '#1565c0',
-  },
-  postItem: {
-    marginLeft: 8,
-    marginTop: 2,
-  },
-  postTitle: {
-    fontSize: 14,
-    color: '#222',
-  },
-  postInfo: {
-    fontSize: 12,
-    color: '#666',
   },
 });

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Alert, Button, ActivityIndicator } from 'react-native';
 import AppNavigator from './navigation/AppNavigator';
-import { navigationRef } from './navigation/navigationRef';
+import { navigateToAuthorDetail, navigateToPostDetail, navigationRef } from './navigation/navigationRef';
 import api from './utils/api';
 import { clearStorage } from './utils/storage';
 import { useAuth } from './hooks/useAuth';
@@ -12,7 +12,7 @@ export default function App() {
   if (isLoading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size='large' />
       </View>
     );
   }
@@ -62,10 +62,56 @@ function DevPanel({ onLogout }: DevPanelProps) {
     }
   };
 
+  const handleFakePostDetail = () => {
+    console.log('模擬進入 PostDetail');
+    const mockPost = {
+      id: 123,
+      tag: '測試',
+      title: '這是一篇測試貼文',
+      date: '2024/05/27',
+      href: '/ptt/test',
+      highest: {
+        date: '2024/05/27',
+        diff: 5,
+        diffPercent: 10,
+        price: 100,
+        type: ['test'],
+      },
+      _id: 'fake-id',
+    };
+
+    navigateToPostDetail(mockPost);
+  };
+
+  const handleFakeAuthorDetail = () => {
+    console.log('模擬進入 AuthorDetail');
+    const mockAuthor = {
+      name: '測試作者',
+      mean: 12.34,
+      maxRate: 20.5,
+      minRate: -3.2,
+      median: 11.1,
+      stdDev: 4.5,
+      posts: [], // 可加代表作
+      totalRate: 36.9,
+      score: 88.8,
+      combinedRank: 1,
+      author: 'tester',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      likes: 99,
+      dislikes: 1,
+    };
+
+    navigateToAuthorDetail(mockAuthor);
+  };
+
   return (
     <View style={styles.globalButtons}>
-      <Button title="登出" onPress={handleLogout} />
-      <Button title="測試Ping" onPress={handlePing} />
+      <Button title='登出' onPress={handleLogout} />
+      <Button title='測試Ping' onPress={handlePing} />
+      <Button title='PostDetail' onPress={handleFakePostDetail} />
+      <Button title='AuthorDetail' onPress={handleFakeAuthorDetail} />
     </View>
   );
 }

@@ -4,6 +4,7 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator }
 import { usePostNavigation, ROUTES } from '../navigation';
 import { PostItem } from '../types/PostItem';
 import api from '../utils/api';
+import { toYYYYMMDDWithSeparator } from '../utils/datetimeFormatter';
 
 export default function PostListScreen() {
   const navigation = usePostNavigation();
@@ -28,7 +29,7 @@ export default function PostListScreen() {
 
   return loading ? (
     <View style={styles.loader}>
-      <ActivityIndicator size="large" />
+      <ActivityIndicator size='large' />
       <Text>載入中...</Text>
     </View>
   ) : (
@@ -37,13 +38,14 @@ export default function PostListScreen() {
       data={posts}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigation.navigate(ROUTES.Post.PostDetail, { post: item })}
-        >
+        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate(ROUTES.Post.PostDetail, { post: item })}>
           <Text style={styles.title}>
             [{item.tag}] {item.title}
           </Text>
+          <View style={styles.metaRow}>
+            <Text style={styles.author}>{item.author}</Text>
+            <Text style={styles.date}>{toYYYYMMDDWithSeparator(new Date(item.id * 1000), '-')}</Text>
+          </View>
         </TouchableOpacity>
       )}
       refreshing={loading}
@@ -71,5 +73,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  metaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 8,
+    alignItems: 'center',
+  },
+  author: {
+    fontSize: 13,
+    color: '#555',
+  },
+  date: {
+    fontSize: 13,
+    color: '#888',
   },
 });
