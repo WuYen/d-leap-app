@@ -31,18 +31,6 @@ export function usePushNotifications() {
     registerForPushNotificationsAsync().then(async (token) => {
       if (token) {
         setExpoPushToken(token);
-
-        // try {
-        //   const account = await getAccount();
-        //   if (account) {
-        //     await api.post('/expo-token', { account, pushToken: token });
-        //     console.log('✅ Expo Push Token 綁定成功');
-        //   } else {
-        //     console.log('⚠️ 尚未登入，跳過Push Token綁定');
-        //   }
-        // } catch (error) {
-        //   console.error('❌ Expo Push Token 綁定失敗', error);
-        // }
       }
     });
 
