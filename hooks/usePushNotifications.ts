@@ -41,6 +41,7 @@ export function usePushNotifications() {
 
     // 監聽通知回應
     responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+      //TODO: 分析推播類型然後呼叫跳轉
       console.log('使用者互動的通知：', response);
       const post = response.notification.request.content.data.post;
       if (post) {

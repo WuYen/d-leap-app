@@ -1,29 +1,61 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+// AuthorDetailScreen.tsx
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import { useAuthorRoute } from '../navigation';
+import AuthorCard from '../components/AuthorCard';
+import { PostCard } from '../components/PostCard'; // 你剛剛那張卡片
+import api from '../utils/api';
 
 export default function AuthorDetailScreen() {
   const route = useAuthorRoute<'AuthorDetail'>();
   const { author } = route.params;
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  //TODO: call api, display author details
+  // 這邊 api 回傳格式: { success: true, data: [ {...文章物件...} ] }
+  const loadAuthorPosts = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get<{ success: boolean; data: any[] }>(`/ptt/author/${author.name}?refresh=false`);
+      setPosts(res.data);
+    } catch (err) {
+      console.error('Fetch author posts failed:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadAuthorPosts();
+  }, [author]);
+
+  if (loading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" />
+        <Text>載入文章中...</Text>
+      </View>
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.name}>{author.name}</Text>
-      <Text>總分數: {author.score.toFixed(2)}</Text>
-      <Text>總報酬: {author.totalRate.toFixed(2)}%</Text>
-    </View>
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* 上方沿用 AuthorCard（可以傳入 author 或自訂 props） */}
+      <AuthorCard author={author} />
+      <Text style={styles.sectionTitle}>近期發文</Text>
+      <FlatList
+        data={posts}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <PostCard post={item} />}
+        scrollEnabled={false} // 因為用 ScrollView 包起來，這裡關掉 FlatList 滾動
+        contentContainerStyle={{ paddingBottom: 32 }}
+      />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    padding: 16,
-  },
-  name: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 12,
-  },
+  container: { padding: 16 },
+  loader: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  sectionTitle: { fontSize: 18, fontWeight: 'bold', marginVertical: 14 },
 });

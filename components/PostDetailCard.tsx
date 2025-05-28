@@ -1,6 +1,6 @@
 // components/PostDetailCard.tsx
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Linking, TouchableOpacity } from 'react-native';
 import { PostItem } from '../types/PostItem';
 
 type Props = {
@@ -8,7 +8,6 @@ type Props = {
 };
 
 export default function PostDetailCard({ post }: Props) {
-  //TODO: 打開網頁
   return (
     <View style={styles.card}>
       <Text style={styles.title}>
@@ -16,7 +15,20 @@ export default function PostDetailCard({ post }: Props) {
       </Text>
       <Text style={styles.info}>作者：{post.author}</Text>
       <Text style={styles.info}>日期：{post.date}</Text>
-      <Text style={styles.info}>連結：{post.href}</Text>
+      <TouchableOpacity onPress={() => Linking.openURL(`https://www.ptt.cc${post.href}`)}>
+        <Text
+          style={[
+            styles.info,
+            {
+              color: '#1976d2',
+              textDecorationLine: 'underline',
+              fontStyle: 'italic', // 斜體
+            },
+          ]}
+        >
+          查看來源
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
