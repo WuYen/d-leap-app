@@ -11,7 +11,7 @@ export default function DetailScreen() {
 
   return (
     <View style={styles.container}>
-      <PostCard post={post} />
+      <PostCard post={post} showLink={true} />
     </View>
   );
 }

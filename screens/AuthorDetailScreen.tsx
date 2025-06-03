@@ -31,8 +31,8 @@ export default function AuthorDetailScreen() {
       const [authorList, postsRes] = await Promise.all([authorPromise, postsPromise]);
 
       // 3. 處理 author 資料
-      if (!authorData && authorList.data.length > 0 && author) {
-        const found = authorList.data.find((item) => item.name === author.name);
+      if (!authorData && authorList.data.length > 0 && authorId) {
+        const found = authorList.data.find((item) => item.name === authorId);
         if (found) setAuthorData(found);
       }
       setPosts(postsRes.data);
@@ -50,7 +50,7 @@ export default function AuthorDetailScreen() {
   if (loading) {
     return (
       <View style={styles.loader}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size='large' />
         <Text>載入文章中...</Text>
       </View>
     );

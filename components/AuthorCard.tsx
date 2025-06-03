@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated, Platform, UIManager, Easing } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LeaderboardItem } from '../types/AuthorTypes';
+import { ROUTES, useAuthorNavigation } from '../navigation';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -12,6 +13,7 @@ type Props = {
 };
 
 export default function AuthorCard({ author }: Props) {
+  const navigation = useAuthorNavigation();
   const [expanded, setExpanded] = useState(false);
   const rotateAnim = useRef(new Animated.Value(0)).current;
   const heightAnim = useRef(new Animated.Value(0)).current;
@@ -51,11 +53,8 @@ export default function AuthorCard({ author }: Props) {
   return (
     <View style={styles.card}>
       <View style={styles.headerRow}>
-        <Text style={styles.name}>{author.name}</Text>
-        <TouchableOpacity onPress={toggleExpand} activeOpacity={0.7}>
-          <Animated.View style={{ transform: [{ rotate }] }}>
-            <Ionicons name="chevron-down" size={20} color="#1976d2" />
-          </Animated.View>
+        <TouchableOpacity onPress={() => navigation.navigate(ROUTES.Author.AuthorDetail, { authorId: author.name })}>
+          <Text style={styles.name}>{author.name}</Text>
         </TouchableOpacity>
       </View>
 
@@ -83,6 +82,7 @@ export default function AuthorCard({ author }: Props) {
             <View key={post.id} style={styles.postItem}>
               <Text style={styles.postTitle}>{post.title}</Text>
               <View style={styles.postInfoRow}>
+                {/* TODO 使用 toYYYYMMDDWithSeparator 格式化日期 */}
                 <Text style={styles.postDate}>{post.date}</Text>
                 <Text
                   style={[
@@ -99,6 +99,13 @@ export default function AuthorCard({ author }: Props) {
           ))}
         </View>
       </Animated.View>
+      <View style={styles.chevronContainer}>
+        <TouchableOpacity onPress={toggleExpand} activeOpacity={0.7}>
+          <Animated.View style={{ transform: [{ rotate }] }}>
+            <Ionicons name='chevron-down' size={20} color='#1976d2' />
+          </Animated.View>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -121,6 +128,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#1976d2',
+    textDecorationLine: 'underline', // 加底線
   },
   metricsRow: {
     flexDirection: 'row',
@@ -176,5 +184,9 @@ const styles = StyleSheet.create({
   },
   postsContainer: {
     paddingTop: 8,
+  },
+  chevronContainer: {
+    alignItems: 'center',
+    marginTop: 8,
   },
 });
