@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 
 import { usePostNavigation, ROUTES } from '../navigation';
-import { PostItem } from '../types/PostItem';
+import { PostItem } from '../types/PostTypes';
 import api from '../utils/api';
 import { toYYYYMMDDWithSeparator } from '../utils/datetimeFormatter';
 
@@ -29,7 +29,7 @@ export default function PostListScreen() {
 
   return loading ? (
     <View style={styles.loader}>
-      <ActivityIndicator size='large' />
+      <ActivityIndicator size="large" />
       <Text>載入中...</Text>
     </View>
   ) : (
@@ -38,7 +38,10 @@ export default function PostListScreen() {
       data={posts}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
-        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate(ROUTES.Post.PostDetail, { post: item })}>
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() => navigation.navigate(ROUTES.Post.PostDetail, { post: item })}
+        >
           <Text style={styles.title}>
             [{item.tag}] {item.title}
           </Text>

@@ -1,53 +1,45 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // 需要安裝 @expo/vector-icons
+import { View, Text, StyleSheet, TouchableOpacity, Linking, ViewStyle, StyleProp } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { DiffInfo, PostHistoricalResponse, PostItem } from '../types/PostTypes';
 
 type PostCardProps = {
-  post: any;
-  onBookmark?: () => void;
+  post: PostItem | PostHistoricalResponse;
+  showBookmark?: boolean;
   isBookmarked?: boolean;
+  onBookmark?: () => void;
   onPress?: () => void;
+  showLink?: boolean;
 };
 
-export function PostCard({ post, isBookmarked, onBookmark, onPress }: PostCardProps) {
-  // 找對應三種 type
-  const base = post.processedData.find((d: any) => d.type === 'base');
-  const highest = post.processedData.find((d: any) => d.type === 'highest');
-  const latest = post.processedData.find((d: any) => d.type === 'latest');
-
+export function PostCard({ post, showBookmark, isBookmarked, onBookmark, onPress, showLink }: PostCardProps) {
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress}>
+    <TouchableOpacity activeOpacity={onPress ? 0.8 : 1} style={styles.card} onPress={onPress}>
       <View style={styles.headerRow}>
         <Text style={styles.title} numberOfLines={2}>
           [{post.tag}] {post.title}
         </Text>
-        <TouchableOpacity onPress={onBookmark} style={{ padding: 4 }}>
-          <Ionicons name={isBookmarked ? 'bookmark' : 'bookmark-outline'} size={22} color="#333" />
-        </TouchableOpacity>
+        {showBookmark && (
+          <TouchableOpacity onPress={onBookmark} style={{ padding: 4 }}>
+            <Ionicons name={isBookmarked ? 'bookmark' : 'bookmark-outline'} size={22} color="#333" />
+          </TouchableOpacity>
+        )}
       </View>
+
       <View style={styles.subRow}>
-        <Text style={styles.author}>{post.author}</Text>
+        <Text style={styles.author}>作者：{post.author}</Text>
         <Text style={styles.date}>{post.date}</Text>
       </View>
 
-      <View style={styles.priceTable}>
-        {/* 標題行 */}
-        <Row label="基準" date={base?.date} price={base?.price} diff={undefined} diffPercent={undefined} />
-        <Row
-          label="最高"
-          date={highest?.date}
-          price={highest?.price}
-          diff={highest?.diff}
-          diffPercent={highest?.diffPercent}
-        />
-        <Row
-          label="最近"
-          date={latest?.date}
-          price={latest?.price}
-          diff={latest?.diff}
-          diffPercent={latest?.diffPercent}
-        />
-      </View>
+      {/* 價格表（只在有 processedData 且 showPriceTable 時顯示） */}
+      <PriceTable processedData={'processedData' in post ? post.processedData : undefined} />
+
+      {/* 來源連結 */}
+      {showLink && post.href && (
+        <TouchableOpacity onPress={() => Linking.openURL(`https://www.ptt.cc${post.href}`)}>
+          <Text style={styles.link}>查看來源</Text>
+        </TouchableOpacity>
+      )}
     </TouchableOpacity>
   );
 }
@@ -74,6 +66,36 @@ function Row({ label, date, price, diff, diffPercent }: any) {
   );
 }
 
+// PriceTable 小組件：自動判斷 processedData，有才顯示
+function PriceTable({ processedData }: { processedData?: DiffInfo[] }) {
+  if (!processedData) return null;
+
+  // 分別找三種 type
+  const base = processedData.find((d) => d.type === 'base');
+  const highest = processedData.find((d) => d.type === 'highest');
+  const latest = processedData.find((d) => d.type === 'latest');
+
+  return (
+    <View style={styles.priceTable}>
+      <Row label="基準" date={base?.date} price={base?.price} />
+      <Row
+        label="最高"
+        date={highest?.date}
+        price={highest?.price}
+        diff={highest?.diff}
+        diffPercent={highest?.diffPercent}
+      />
+      <Row
+        label="最近"
+        date={latest?.date}
+        price={latest?.price}
+        diff={latest?.diff}
+        diffPercent={latest?.diffPercent}
+      />
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
@@ -91,6 +113,15 @@ const styles = StyleSheet.create({
   author: { fontSize: 14, color: '#555' },
   date: { fontSize: 14, color: '#888' },
   priceTable: { marginTop: 12 },
+  link: {
+    color: '#1976d2',
+    textDecorationLine: 'underline',
+    fontStyle: 'italic',
+    marginTop: 10,
+    fontSize: 14,
+    fontWeight: '500',
+    alignSelf: 'flex-start',
+  },
 });
 
 const rowStyles = StyleSheet.create({

@@ -2,7 +2,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import PostDetailCard from '../components/PostDetailCard';
+import { PostCard } from '../components/PostCard';
 import { usePostRoute, ROUTES } from '../navigation';
 
 export default function DetailScreen() {
@@ -11,7 +11,7 @@ export default function DetailScreen() {
 
   return (
     <View style={styles.container}>
-      <PostDetailCard post={post} />
+      <PostCard post={post} />
     </View>
   );
 }

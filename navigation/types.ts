@@ -1,9 +1,10 @@
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { ROUTES } from './routes';
+import { PostItem } from '../types/PostTypes';
 
 export type PostStackParamList = {
   [ROUTES.Post.PostList]: undefined;
-  [ROUTES.Post.PostDetail]: { post: any };
+  [ROUTES.Post.PostDetail]: { post: PostItem };
 };
 
 export type FavoriteStackParamList = {
