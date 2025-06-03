@@ -1,45 +1,11 @@
 // components/RankAuthorList.tsx
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import api from '../utils/api';
-import { ROUTES, useAuthorNavigation } from '../navigation';
 import AuthorCard from '../components/AuthorCard';
-
-export interface LeaderboardPost {
-  title: string;
-  href: string;
-  date: string;
-  id: number;
-  highest: {
-    date: string;
-    diff: number;
-    diffPercent: number;
-    price: number;
-    type: string[];
-  };
-  _id: string;
-}
-
-export interface LeaderboardItem {
-  name: string;
-  mean: number;
-  maxRate: number;
-  minRate: number;
-  median: number;
-  stdDev: number;
-  posts: LeaderboardPost[];
-  totalRate: number;
-  score: number;
-  combinedRank: number;
-  author: string;
-  createdAt: string;
-  updatedAt: string;
-  likes: number;
-  dislikes: number;
-}
+import { LeaderboardItem } from '../types/AuthorTypes';
 
 export default function AuthorListScreen() {
-  const navigation = useAuthorNavigation();
   const [data, setData] = useState<LeaderboardItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -62,7 +28,7 @@ export default function AuthorListScreen() {
   if (loading) {
     return (
       <View style={styles.loader}>
-        <ActivityIndicator size='large' />
+        <ActivityIndicator size="large" />
         <Text>載入排行榜中...</Text>
       </View>
     );

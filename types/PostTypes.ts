@@ -14,6 +14,7 @@ export interface PostHistoricalResponse extends PostItem {
   historicalInfo: HistoricalDataInfo[];
   isRecentPost?: boolean;
   isFavorite?: boolean;
+  highest?: DiffInfo;
 }
 
 export interface DiffInfo {

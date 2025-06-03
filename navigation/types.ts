@@ -14,7 +14,7 @@ export type FavoriteStackParamList = {
 
 export type AuthorStackParamList = {
   [ROUTES.Author.AuthorList]: undefined;
-  [ROUTES.Author.AuthorDetail]: { author: any };
+  [ROUTES.Author.AuthorDetail]: { author?: any; authorId: string };
 };
 
 export type RootTabParamList = {

@@ -5,11 +5,8 @@ import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 import { navigate } from '../navigation/navigationRef';
-import { getAccount } from '../utils/storage';
-import api from '../utils/api';
 
 // https://docs.expo.dev/versions/latest/sdk/notifications/
-
 export function usePushNotifications() {
   const [expoPushToken, setExpoPushToken] = useState<string | null>(null);
   const [notification, setNotification] = useState<Notifications.Notification | null>(null);
