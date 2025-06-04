@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated, Platform, UIManager, Easing } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LeaderboardItem } from '../types';
-import { ROUTES, useAuthorNavigation } from '../navigation';
+
 import { toYYYYMMDDWithSeparator } from '../utils/datetimeFormatter';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -11,10 +11,11 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 
 type Props = {
   author: LeaderboardItem;
+  onPress?: () => void;
+  showPosts?: boolean; // 新增 prop 控制 posts 區塊顯示
 };
 
-export default function AuthorCard({ author }: Props) {
-  const navigation = useAuthorNavigation();
+export default function AuthorCard({ author, onPress, showPosts = true }: Props) {
   const [expanded, setExpanded] = useState(false);
   const rotateAnim = useRef(new Animated.Value(0)).current;
   const heightAnim = useRef(new Animated.Value(0)).current;
@@ -54,7 +55,7 @@ export default function AuthorCard({ author }: Props) {
   return (
     <View style={styles.card}>
       <View style={styles.headerRow}>
-        <TouchableOpacity onPress={() => navigation.navigate(ROUTES.Author.AuthorDetail, { authorId: author.name })}>
+        <TouchableOpacity activeOpacity={onPress ? 0.8 : 1} style={styles.card} onPress={onPress}>
           <Text style={styles.name}>{author.name}</Text>
         </TouchableOpacity>
       </View>
@@ -77,35 +78,39 @@ export default function AuthorCard({ author }: Props) {
       </View>
 
       {/* 展開區塊動畫包裹 */}
-      <Animated.View style={[styles.collapsibleWrapper, { height: contentHeight }]}>
-        <View style={styles.postsContainer}>
-          {author.posts.map((post) => (
-            <View key={post.id} style={styles.postItem}>
-              <Text style={styles.postTitle}>{post.title}</Text>
-              <View style={styles.postInfoRow}>
-                <Text style={styles.postDate}>{toYYYYMMDDWithSeparator(new Date(post.id * 1000), '-')}</Text>
-                <Text
-                  style={[
-                    styles.postPercent,
-                    {
-                      color: (post.highest?.diffPercent ?? 0) >= 0 ? '#d32f2f' : '#388e3c',
-                    },
-                  ]}
-                >
-                  {post.highest?.diffPercent.toFixed(2)}%
-                </Text>
-              </View>
+      {showPosts && (
+        <>
+          <Animated.View style={[styles.collapsibleWrapper, { height: contentHeight }]}>
+            <View style={styles.postsContainer}>
+              {author.posts.map((post) => (
+                <View key={post.id} style={styles.postItem}>
+                  <Text style={styles.postTitle}>{post.title}</Text>
+                  <View style={styles.postInfoRow}>
+                    <Text style={styles.postDate}>{toYYYYMMDDWithSeparator(new Date(post.id * 1000), '-')}</Text>
+                    <Text
+                      style={[
+                        styles.postPercent,
+                        {
+                          color: (post.highest?.diffPercent ?? 0) >= 0 ? '#d32f2f' : '#388e3c',
+                        },
+                      ]}
+                    >
+                      {post.highest?.diffPercent.toFixed(2)}%
+                    </Text>
+                  </View>
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
-      </Animated.View>
-      <View style={styles.chevronContainer}>
-        <TouchableOpacity onPress={toggleExpand} activeOpacity={0.7}>
-          <Animated.View style={{ transform: [{ rotate }] }}>
-            <Ionicons name="chevron-down" size={20} color="#1976d2" />
           </Animated.View>
-        </TouchableOpacity>
-      </View>
+          <View style={styles.chevronContainer}>
+            <TouchableOpacity onPress={toggleExpand} activeOpacity={0.7}>
+              <Animated.View style={{ transform: [{ rotate }] }}>
+                <Ionicons name="chevron-down" size={20} color="#1976d2" />
+              </Animated.View>
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
     </View>
   );
 }

@@ -4,8 +4,10 @@ import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-nativ
 import api from '../utils/api';
 import AuthorCard from '../components/AuthorCard';
 import { LeaderboardItem } from '../types';
+import { ROUTES, useAuthorNavigation } from '../navigation';
 
 export default function AuthorListScreen() {
+  const navigation = useAuthorNavigation();
   const [data, setData] = useState<LeaderboardItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -39,7 +41,12 @@ export default function AuthorListScreen() {
       contentContainerStyle={styles.container}
       data={data}
       keyExtractor={(item) => item.name}
-      renderItem={({ item }) => <AuthorCard author={item} />}
+      renderItem={({ item }) => (
+        <AuthorCard
+          author={item}
+          onPress={() => navigation.navigate(ROUTES.Author.AuthorDetail, { authorId: item.name })}
+        />
+      )}
     />
   );
 }
