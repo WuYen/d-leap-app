@@ -1,10 +1,7 @@
-import Constants from 'expo-constants';
-
-// 這裡統一管理所有環境變數
-const { SERVER_URL, ENV } = Constants.expoConfig?.extra || {};
+const SERVER_URL = process.env.EXPO_PUBLIC_SERVER_URL;
+const ENV = process.env.EXPO_PUBLIC_ENV;
 
 export default {
   SERVER_URL,
   ENV,
-  // 你可以在這裡加更多變數
 };

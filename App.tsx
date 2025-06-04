@@ -5,6 +5,7 @@ import { navigateToAuthorDetail, navigateToPostDetail, navigationRef } from './n
 import api from './utils/api';
 import { clearStorage } from './utils/storage';
 import { useAuth } from './hooks/useAuth';
+import config from './utils/config';
 
 export default function App() {
   const { isLoggedIn, isLoading, expoPushToken, setIsLoggedIn } = useAuth();
@@ -108,6 +109,7 @@ function DevPanel({ onLogout }: DevPanelProps) {
 
   return (
     <View style={styles.globalButtons}>
+      <Text>ENV:{config.ENV}</Text>
       <Button title='登出' onPress={handleLogout} />
       <Button title='測試Ping' onPress={handlePing} />
       <Button title='PostDetail' onPress={handleFakePostDetail} />
