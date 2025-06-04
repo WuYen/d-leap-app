@@ -22,24 +22,29 @@ api.interceptors.request.use(
   }
 );
 
+export type ResponseType<T = any> = {
+  message?: string;
+  data: T;
+};
+
 // ✨ 通用 API 方法
-export const post = async <T = any>(path: string, data?: any): Promise<T> => {
-  const response = await api.post<T>(path, data);
+export const post = async <T = any>(path: string, data?: any): Promise<ResponseType<T>> => {
+  const response = await api.post<ResponseType<T>>(path, data);
   return response.data;
 };
 
-export const get = async <T = any>(path: string, params?: any): Promise<T> => {
-  const response = await api.get<T>(path, { params });
+export const get = async <T = any>(path: string, params?: any): Promise<ResponseType<T>> => {
+  const response = await api.get<ResponseType<T>>(path, { params });
   return response.data;
 };
 
-export const put = async <T = any>(path: string, data?: any): Promise<T> => {
-  const response = await api.put<T>(path, data);
+export const put = async <T = any>(path: string, data?: any): Promise<ResponseType<T>> => {
+  const response = await api.put<ResponseType<T>>(path, data);
   return response.data;
 };
 
-export const del = async <T = any>(path: string): Promise<T> => {
-  const response = await api.delete<T>(path);
+export const del = async <T = any>(path: string): Promise<ResponseType<T>> => {
+  const response = await api.delete<ResponseType<T>>(path);
   return response.data;
 };
 

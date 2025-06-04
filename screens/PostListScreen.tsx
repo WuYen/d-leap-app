@@ -14,7 +14,7 @@ export default function PostListScreen() {
   const loadPosts = async () => {
     setLoading(true);
     try {
-      const res = await api.get<{ data: { posts: PostInfo[] } }>('/ptt/posts');
+      const res = await api.get<{ posts: PostInfo[] }>('/ptt/posts');
       setPosts(res.data.posts);
     } catch (err) {
       console.error('Fetch failed:', err);
@@ -29,7 +29,7 @@ export default function PostListScreen() {
 
   return loading ? (
     <View style={styles.loader}>
-      <ActivityIndicator size="large" />
+      <ActivityIndicator size='large' />
       <Text>載入中...</Text>
     </View>
   ) : (

@@ -19,12 +19,10 @@ export default function AuthorDetailScreen() {
     try {
       // 1. 兩個 promise 準備好
       const authorPromise = !authorData
-        ? api.get<{ data: LeaderboardItem[] }>('/my/authors/rank')
+        ? api.get<LeaderboardItem[]>('/my/authors/rank')
         : Promise.resolve({ data: [] as LeaderboardItem[] }); // dummy
 
-      const postsPromise = api.get<{ success: boolean; data: PostHistoricalResponse[] }>(
-        `/ptt/author/${authorId}?refresh=false`
-      );
+      const postsPromise = api.get<PostHistoricalResponse[]>(`/ptt/author/${authorId}?refresh=false`);
 
       // 2. 並行呼叫！
       const [authorList, postsRes] = await Promise.all([authorPromise, postsPromise]);

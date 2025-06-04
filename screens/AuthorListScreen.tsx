@@ -14,7 +14,7 @@ export default function AuthorListScreen() {
   const loadLeaderboard = async () => {
     setLoading(true);
     try {
-      const res = await api.get<{ data: LeaderboardItem[] }>('/my/authors/rank');
+      const res = await api.get<LeaderboardItem[]>('/my/authors/rank');
       setData(res.data);
     } catch (err) {
       console.error('Fetch leaderboard failed:', err);
@@ -30,7 +30,7 @@ export default function AuthorListScreen() {
   if (loading) {
     return (
       <View style={styles.loader}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size='large' />
         <Text>載入排行榜中...</Text>
       </View>
     );

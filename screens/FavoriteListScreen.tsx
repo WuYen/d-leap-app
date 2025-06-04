@@ -13,9 +13,7 @@ export default function FavoriteListScreen() {
   const loadFavorites = async () => {
     setLoading(true);
     try {
-      const res = await api.get<{ data: MyPostHistoricalResponse[] }>(
-        '/my/posts/favorite'
-      );
+      const res = await api.get<MyPostHistoricalResponse[]>('/my/posts/favorite');
       setPosts(res.data);
     } catch (err) {
       console.error('Fetch favorites failed:', err);
@@ -31,7 +29,7 @@ export default function FavoriteListScreen() {
   if (loading) {
     return (
       <View style={styles.loader}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size='large' />
         <Text>載入中...</Text>
       </View>
     );
@@ -43,12 +41,7 @@ export default function FavoriteListScreen() {
       data={posts}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
-        <PostCard
-          post={item}
-          onPress={() =>
-            navigation.navigate(ROUTES.Favorite.FavoriteDetail, { item })
-          }
-        />
+        <PostCard post={item} onPress={() => navigation.navigate(ROUTES.Favorite.FavoriteDetail, { item })} />
       )}
       refreshing={loading}
       onRefresh={loadFavorites}

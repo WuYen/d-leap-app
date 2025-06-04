@@ -17,7 +17,10 @@ export default function RegisterScreen({ onSetIsLoggedIn }: Props) {
     try {
       await api.post('/login/expo/register', { account, pushToken: expoPushToken });
       Alert.alert('註冊成功！');
-      const res = await api.post('/login/expo', { account, pushToken: expoPushToken });
+      const res = await api.post<{ token: string }>('/login/expo', {
+        account,
+        pushToken: expoPushToken,
+      });
       //TODO: error handling, res should be checked
       await localStorage.saveAccount(account);
       await localStorage.saveJwtToken(res.data.token);
@@ -32,12 +35,12 @@ export default function RegisterScreen({ onSetIsLoggedIn }: Props) {
   return (
     <View style={{ flex: 1, justifyContent: 'center', padding: 20 }}>
       <TextInput
-        placeholder="輸入帳號"
+        placeholder='輸入帳號'
         value={account}
         onChangeText={setAccount}
         style={{ borderBottomWidth: 1, marginBottom: 20 }}
       />
-      <Button title="註冊並登入" onPress={handleRegister} />
+      <Button title='註冊並登入' onPress={handleRegister} />
     </View>
   );
 }

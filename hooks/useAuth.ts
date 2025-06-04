@@ -27,7 +27,7 @@ export function useAuth(): UseAuthResult {
       }
 
       try {
-        const res = await api.post('/login/expo', {
+        const res = await api.post<{ token: string }>('/login/expo', {
           account: savedAccount,
           pushToken: expoPushToken ?? '', // allow null for simulator
         });
