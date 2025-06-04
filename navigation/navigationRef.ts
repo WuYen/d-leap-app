@@ -22,12 +22,25 @@ export function navigateToPostDetail(post: any) {
   });
 }
 
+/**
+ * Navigate to the AuthorDetail screen.
+ *
+ * This helper accepts either an author object or an author id string. The
+ * AuthorDetail screen expects both the authorId and, optionally, the author
+ * object itself. Supplying only the author object previously caused a runtime
+ * error because the required `authorId` parameter was missing.
+ */
 export function navigateToAuthorDetail(author: any) {
+  const params =
+    typeof author === 'string'
+      ? { authorId: author }
+      : { author, authorId: author?.name };
+
   navigate(ROUTES.Root.MainTabs, {
     screen: ROUTES.Tab.Author,
     params: {
       screen: ROUTES.Author.AuthorDetail,
-      params: { author },
+      params,
     },
   });
 }
