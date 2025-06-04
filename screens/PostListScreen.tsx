@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 
 import { usePostNavigation, ROUTES } from '../navigation';
-import { PostInfo } from '../types/PostTypes';
+import { PostInfo } from '../types';
 import api from '../utils/api';
 import { toYYYYMMDDWithSeparator } from '../utils/datetimeFormatter';
 

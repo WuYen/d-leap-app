@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking, ViewStyle, StyleProp } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { DiffInfo, PostHistoricalResponse, PostInfo } from '../types/PostTypes';
+import { DiffInfo, PostHistoricalResponse, PostInfo } from '../types';
 
 type PostCardProps = {
   post: PostInfo | PostHistoricalResponse;

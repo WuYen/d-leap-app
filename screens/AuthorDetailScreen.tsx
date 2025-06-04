@@ -5,8 +5,7 @@ import { useAuthorRoute } from '../navigation';
 import AuthorCard from '../components/AuthorCard';
 import { PostCard } from '../components/PostCard'; // 你剛剛那張卡片
 import api from '../utils/api';
-import { PostHistoricalResponse } from '../types/PostTypes';
-import { LeaderboardItem } from '../types/AuthorTypes';
+import { PostHistoricalResponse, LeaderboardItem } from '../types';
 
 export default function AuthorDetailScreen() {
   const route = useAuthorRoute<'AuthorDetail'>();
@@ -50,7 +49,7 @@ export default function AuthorDetailScreen() {
   if (loading) {
     return (
       <View style={styles.loader}>
-        <ActivityIndicator size='large' />
+        <ActivityIndicator size="large" />
         <Text>載入文章中...</Text>
       </View>
     );

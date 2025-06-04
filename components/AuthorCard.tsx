@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated, Platform, UIManager, Easing } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { LeaderboardItem } from '../types/AuthorTypes';
+import { LeaderboardItem } from '../types';
 import { ROUTES, useAuthorNavigation } from '../navigation';
 import { toYYYYMMDDWithSeparator } from '../utils/datetimeFormatter';
 

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import api from '../utils/api';
 import AuthorCard from '../components/AuthorCard';
-import { LeaderboardItem } from '../types/AuthorTypes';
+import { LeaderboardItem } from '../types';
 
 export default function AuthorListScreen() {
   const [data, setData] = useState<LeaderboardItem[]>([]);

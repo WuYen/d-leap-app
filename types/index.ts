@@ -1,3 +1,4 @@
+// Post 相關型別
 export type PostInfo = {
   id: number;
   title: string;
@@ -40,4 +41,23 @@ export interface HistoricalDataInfo {
   volume: number;
   turnover: number;
   change: number;
+}
+
+// Author 相關型別
+export interface LeaderboardItem {
+  name: string;
+  mean: number;
+  maxRate: number;
+  minRate: number;
+  median: number;
+  stdDev: number;
+  posts: PostHistoricalResponse[];
+  totalRate: number;
+  score: number;
+  combinedRank: number;
+  author: string;
+  createdAt: string;
+  updatedAt: string;
+  likes: number;
+  dislikes: number;
 }

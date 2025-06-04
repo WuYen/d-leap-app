@@ -1,6 +1,6 @@
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { ROUTES } from './routes';
-import { PostInfo } from '../types/PostTypes';
+import { PostInfo } from '../types';
 
 export type PostStackParamList = {
   [ROUTES.Post.PostList]: undefined;

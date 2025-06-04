@@ -5,7 +5,7 @@ import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 import { navigateToAuthorDetail } from '../navigation/navigationRef';
-import { PostInfo } from '../types/PostTypes';
+import { PostInfo } from '../types';
 
 // https://docs.expo.dev/versions/latest/sdk/notifications/
 export function usePushNotifications() {
