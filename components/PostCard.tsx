@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { DiffInfo, PostHistoricalResponse, PostInfo } from '../types';
+import { DiffInfo, PostHistoricalResponse, PostInfo, MyPostHistoricalResponse } from '../types';
 
 type PostCardProps = {
-  post: PostInfo | PostHistoricalResponse;
+  post: PostInfo | PostHistoricalResponse | MyPostHistoricalResponse;
   showBookmark?: boolean;
   isBookmarked?: boolean;
   onBookmark?: () => void;

@@ -18,6 +18,14 @@ export interface PostHistoricalResponse extends PostInfo {
   highest?: DiffInfo;
 }
 
+export interface MyPostHistoricalResponse extends PostHistoricalResponse {
+  cost?: number;
+  shares?: number;
+  notes?: string;
+  profit: number | null;
+  profitRate?: number | null;
+}
+
 export interface DiffInfo {
   date: string;
   diff: number;
