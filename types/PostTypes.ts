@@ -1,4 +1,4 @@
-export type PostItem = {
+export type PostInfo = {
   id: number;
   title: string;
   tag: string;
@@ -8,7 +8,7 @@ export type PostItem = {
   batchNo: number;
 };
 
-export interface PostHistoricalResponse extends PostItem {
+export interface PostHistoricalResponse extends PostInfo {
   stockNo: string;
   processedData: DiffInfo[];
   historicalInfo: HistoricalDataInfo[];

@@ -4,7 +4,8 @@ import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
-import { navigate } from '../navigation/navigationRef';
+import { navigateToAuthorDetail } from '../navigation/navigationRef';
+import { PostInfo } from '../types/PostTypes';
 
 // https://docs.expo.dev/versions/latest/sdk/notifications/
 export function usePushNotifications() {
@@ -38,11 +39,10 @@ export function usePushNotifications() {
 
     // 監聽通知回應
     responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-      //TODO: 分析推播類型然後呼叫跳轉
       console.log('使用者互動的通知：', response);
-      const post = response.notification.request.content.data.post;
+      const post = response.notification.request.content.data.post as PostInfo;
       if (post) {
-        navigate('Detail', { post }); // ✅ 直接導頁！
+        navigateToAuthorDetail(post.author);
       }
     });
 

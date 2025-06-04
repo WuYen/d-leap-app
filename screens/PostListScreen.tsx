@@ -2,19 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 
 import { usePostNavigation, ROUTES } from '../navigation';
-import { PostItem } from '../types/PostTypes';
+import { PostInfo } from '../types/PostTypes';
 import api from '../utils/api';
 import { toYYYYMMDDWithSeparator } from '../utils/datetimeFormatter';
 
 export default function PostListScreen() {
   const navigation = usePostNavigation();
-  const [posts, setPosts] = useState<PostItem[]>([]);
+  const [posts, setPosts] = useState<PostInfo[]>([]);
   const [loading, setLoading] = useState(true);
 
   const loadPosts = async () => {
     setLoading(true);
     try {
-      const res = await api.get<{ data: { posts: PostItem[] } }>('/ptt/posts');
+      const res = await api.get<{ data: { posts: PostInfo[] } }>('/ptt/posts');
       setPosts(res.data.posts);
     } catch (err) {
       console.error('Fetch failed:', err);

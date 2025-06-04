@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Animated, Platform, UIManager
 import { Ionicons } from '@expo/vector-icons';
 import { LeaderboardItem } from '../types/AuthorTypes';
 import { ROUTES, useAuthorNavigation } from '../navigation';
+import { toYYYYMMDDWithSeparator } from '../utils/datetimeFormatter';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -82,8 +83,7 @@ export default function AuthorCard({ author }: Props) {
             <View key={post.id} style={styles.postItem}>
               <Text style={styles.postTitle}>{post.title}</Text>
               <View style={styles.postInfoRow}>
-                {/* TODO 使用 toYYYYMMDDWithSeparator 格式化日期 */}
-                <Text style={styles.postDate}>{post.date}</Text>
+                <Text style={styles.postDate}>{toYYYYMMDDWithSeparator(new Date(post.id * 1000), '-')}</Text>
                 <Text
                   style={[
                     styles.postPercent,
@@ -102,7 +102,7 @@ export default function AuthorCard({ author }: Props) {
       <View style={styles.chevronContainer}>
         <TouchableOpacity onPress={toggleExpand} activeOpacity={0.7}>
           <Animated.View style={{ transform: [{ rotate }] }}>
-            <Ionicons name='chevron-down' size={20} color='#1976d2' />
+            <Ionicons name="chevron-down" size={20} color="#1976d2" />
           </Animated.View>
         </TouchableOpacity>
       </View>
