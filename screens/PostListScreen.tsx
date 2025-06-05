@@ -1,38 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 
 import { usePostNavigation, ROUTES } from '../navigation';
-import { PostInfo } from '../types';
-import api from '../utils/api';
 import { PostCard } from '../components/PostCard';
+import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from 'recoil';
+import { postsState } from '../states/postsState';
 
 export default function PostListScreen() {
   const navigation = usePostNavigation();
-  const [posts, setPosts] = useState<PostInfo[]>([]);
-  const [loading, setLoading] = useState(true);
+  const postsLoadable = useRecoilValueLoadable(postsState);
+  const refresh = useRecoilRefresher_UNSTABLE(postsState);
 
-  const loadPosts = async () => {
-    setLoading(true);
-    try {
-      const res = await api.get<{ posts: PostInfo[] }>('/ptt/posts');
-      setPosts(res.data.posts);
-    } catch (err) {
-      console.error('Fetch failed:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (postsLoadable.state === 'loading') {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size='large' />
+        <Text>載入中...</Text>
+      </View>
+    );
+  }
 
-  useEffect(() => {
-    loadPosts();
-  }, []);
+  if (postsLoadable.state === 'hasError') {
+    return (
+      <View style={styles.loader}>
+        <Text>載入失敗</Text>
+      </View>
+    );
+  }
 
-  return loading ? (
-    <View style={styles.loader}>
-      <ActivityIndicator size='large' />
-      <Text>載入中...</Text>
-    </View>
-  ) : (
+  const posts = postsLoadable.contents;
+
+  return (
     <FlatList
       contentContainerStyle={styles.container}
       data={posts}
@@ -40,8 +38,8 @@ export default function PostListScreen() {
       renderItem={({ item }) => (
         <PostCard post={item} onPress={() => navigation.navigate(ROUTES.Post.PostDetail, { post: item })} />
       )}
-      refreshing={loading}
-      onRefresh={loadPosts}
+      refreshing={postsLoadable.state === ('loading' as any)}
+      onRefresh={refresh}
     />
   );
 }
