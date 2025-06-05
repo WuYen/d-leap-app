@@ -4,6 +4,7 @@ export default {
     slug: 'd-leap-app',
     // ...其他設定
     android: {
+      package: 'com.wuyen.dleap',
       googleServicesFile: './android/app/google-services.json',
     },
     extra: {
