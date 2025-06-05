@@ -1,20 +1,21 @@
 import { useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
 import api from '../utils/api';
 import * as localStorage from '../utils/storage';
 import { usePushNotifications } from './usePushNotifications';
+import { authState } from '../states/authState';
 
 type UseAuthResult = {
   isLoggedIn: boolean;
   isLoading: boolean;
   account: string | null;
   expoPushToken: string | null;
-  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsLoggedIn: (value: boolean) => void;
 };
 
 export function useAuth(): UseAuthResult {
   const { expoPushToken } = usePushNotifications();
-  const [account, setAccount] = useState<string | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [auth, setAuth] = useRecoilState(authState);
   const [isLoading, setIsLoading] = useState(true);
 
   // 自動登入流程
@@ -32,8 +33,7 @@ export function useAuth(): UseAuthResult {
           pushToken: expoPushToken ?? '', // allow null for simulator
         });
         await localStorage.saveJwtToken(res.data.token);
-        setAccount(savedAccount);
-        setIsLoggedIn(true);
+        setAuth({ isLoggedIn: true, account: savedAccount });
       } catch (err) {
         console.warn('🔐 自動登入失敗:', err);
       } finally {
@@ -42,13 +42,14 @@ export function useAuth(): UseAuthResult {
     };
 
     autoLogin();
-  }, [expoPushToken]);
+  }, [expoPushToken, setAuth]);
 
   return {
     expoPushToken,
-    isLoggedIn,
+    isLoggedIn: auth.isLoggedIn,
     isLoading,
-    account,
-    setIsLoggedIn,
+    account: auth.account,
+    setIsLoggedIn: (value: boolean) =>
+      setAuth((prev) => ({ ...prev, isLoggedIn: value })),
   };
 }

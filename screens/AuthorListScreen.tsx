@@ -1,33 +1,17 @@
 // components/RankAuthorList.tsx
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
-import api from '../utils/api';
 import AuthorCard from '../components/AuthorCard';
-import { LeaderboardItem } from '../types';
 import { ROUTES, useAuthorNavigation } from '../navigation';
+import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from 'recoil';
+import { authorsState } from '../states/authorsState';
 
 export default function AuthorListScreen() {
   const navigation = useAuthorNavigation();
-  const [data, setData] = useState<LeaderboardItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const loadLeaderboard = async () => {
-    setLoading(true);
-    try {
-      const res = await api.get<LeaderboardItem[]>('/my/authors/rank');
-      setData(res.data);
-    } catch (err) {
-      console.error('Fetch leaderboard failed:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadLeaderboard();
-  }, []);
-
-  if (loading) {
+  const authorsLoadable = useRecoilValueLoadable(authorsState);
+  const refresh = useRecoilRefresher_UNSTABLE(authorsState);
+  
+  if (authorsLoadable.state === 'loading') {
     return (
       <View style={styles.loader}>
         <ActivityIndicator size='large' />
@@ -35,6 +19,16 @@ export default function AuthorListScreen() {
       </View>
     );
   }
+
+  if (authorsLoadable.state === 'hasError') {
+    return (
+      <View style={styles.loader}>
+        <Text>載入失敗</Text>
+      </View>
+    );
+  }
+
+  const data = authorsLoadable.contents;
 
   return (
     <FlatList
@@ -47,6 +41,8 @@ export default function AuthorListScreen() {
           onPress={() => navigation.navigate(ROUTES.Author.AuthorDetail, { authorId: item.name })}
         />
       )}
+      refreshing={authorsLoadable.state === ('loading' as any)}
+      onRefresh={refresh}
     />
   );
 }
