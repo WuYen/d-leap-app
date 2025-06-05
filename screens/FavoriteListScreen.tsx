@@ -1,35 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
 import { ROUTES, useFavoriteNavigation } from '../navigation';
-import { MyPostHistoricalResponse } from '../types';
-import api from '../utils/api';
 import { PostCard } from '../components/PostCard';
+import { useRecoilState } from 'recoil';
+import { favoritesState } from '../states/favoritesState';
 
 export default function FavoriteListScreen() {
   const navigation = useFavoriteNavigation();
-  const [posts, setPosts] = useState<MyPostHistoricalResponse[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const loadFavorites = async () => {
-    setLoading(true);
-    try {
-      const res = await api.get<MyPostHistoricalResponse[]>('/my/posts/favorite');
-      setPosts(res.data);
-    } catch (err) {
-      console.error('Fetch favorites failed:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadFavorites();
-  }, []);
+  const [favoriteData, setFavoriteData] = useRecoilState(favoritesState);
+  const { posts, loading } = favoriteData;
 
   if (loading) {
     return (
       <View style={styles.loader}>
-        <ActivityIndicator size='large' />
+        <ActivityIndicator size="large" />
         <Text>載入中...</Text>
       </View>
     );
@@ -41,10 +25,12 @@ export default function FavoriteListScreen() {
       data={posts}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
-        <PostCard post={item} onPress={() => navigation.navigate(ROUTES.Favorite.FavoriteDetail, { item })} />
+        // TODO: onPress={() => navigation.navigate(ROUTES.Favorite.FavoriteDetail, { item })}
+        <PostCard post={item} />
       )}
-      refreshing={loading}
-      onRefresh={loadFavorites}
+      //TODO: 這裡可以加上下拉刷新功能
+      //refreshing={loading}
+      //onRefresh={loadFavorites}
     />
   );
 }

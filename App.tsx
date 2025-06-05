@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Alert, Button, ActivityIndicator } from 'react-native';
 import AppNavigator from './navigation/AppNavigator';
 import { navigateToAuthorDetail, navigateToPostDetail, navigationRef } from './navigation/navigationRef';
@@ -6,14 +6,46 @@ import api from './utils/api';
 import { clearStorage } from './utils/storage';
 import { useAuth } from './hooks/useAuth';
 import config from './utils/config';
+import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { favoritesState } from './states/favoritesState';
+import { MyPostHistoricalResponse } from './types';
 
 export default function App() {
+  return (
+    <RecoilRoot>
+      <AppWithState />
+    </RecoilRoot>
+  );
+}
+
+function AppWithState() {
   const { isLoggedIn, isLoading, expoPushToken, setIsLoggedIn } = useAuth();
+  const setFavorites = useSetRecoilState(favoritesState);
+
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      if (!isLoggedIn) {
+        setFavorites({ posts: [], authors: [], loading: false });
+        return;
+      }
+
+      setFavorites((prev) => ({ ...prev, loading: true }));
+      try {
+        const res = await api.get<MyPostHistoricalResponse[]>('/my/posts/favorite');
+        setFavorites({ posts: res.data, authors: [], loading: false });
+      } catch (err) {
+        console.error('Fetch favorites failed:', err);
+        setFavorites((prev) => ({ ...prev, loading: false }));
+      }
+    };
+
+    fetchFavorites();
+  }, [isLoggedIn, setFavorites]);
 
   if (isLoading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size='large' />
+        <ActivityIndicator size="large" />
       </View>
     );
   }
@@ -110,10 +142,10 @@ function DevPanel({ onLogout }: DevPanelProps) {
   return (
     <View style={styles.globalButtons}>
       <Text>ENV:{config.ENV}</Text>
-      <Button title='登出' onPress={handleLogout} />
-      <Button title='測試Ping' onPress={handlePing} />
-      <Button title='PostDetail' onPress={handleFakePostDetail} />
-      <Button title='AuthorDetail' onPress={handleFakeAuthorDetail} />
+      <Button title="登出" onPress={handleLogout} />
+      <Button title="測試Ping" onPress={handlePing} />
+      <Button title="PostDetail" onPress={handleFakePostDetail} />
+      <Button title="AuthorDetail" onPress={handleFakeAuthorDetail} />
     </View>
   );
 }

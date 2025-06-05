@@ -2,17 +2,18 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { DiffInfo, PostHistoricalResponse, PostInfo, MyPostHistoricalResponse } from '../types';
+import useFavorite from '../hooks/useFavorite';
 
 type PostCardProps = {
   post: PostInfo | PostHistoricalResponse | MyPostHistoricalResponse;
   showBookmark?: boolean;
-  isBookmarked?: boolean;
-  onBookmark?: () => void;
   onPress?: () => void;
   showLink?: boolean;
 };
 
-export function PostCard({ post, showBookmark, isBookmarked, onBookmark, onPress, showLink }: PostCardProps) {
+export function PostCard({ post, showBookmark, onPress, showLink }: PostCardProps) {
+  const [isFavorite, toggleFavorite] = useFavorite(post as PostInfo);
+
   return (
     <TouchableOpacity activeOpacity={onPress ? 0.8 : 1} style={styles.card} onPress={onPress}>
       <View style={styles.headerRow}>
@@ -20,8 +21,8 @@ export function PostCard({ post, showBookmark, isBookmarked, onBookmark, onPress
           [{post.tag}] {post.title}
         </Text>
         {showBookmark && (
-          <TouchableOpacity onPress={onBookmark} style={{ padding: 4 }}>
-            <Ionicons name={isBookmarked ? 'bookmark' : 'bookmark-outline'} size={22} color="#333" />
+          <TouchableOpacity onPress={toggleFavorite} style={{ padding: 4 }}>
+            <Ionicons name={isFavorite ? 'bookmark' : 'bookmark-outline'} size={22} color="#333" />
           </TouchableOpacity>
         )}
       </View>
