@@ -13,7 +13,7 @@ export default function FavoriteListScreen() {
   if (loading) {
     return (
       <View style={styles.loader}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size='large' />
         <Text>載入中...</Text>
       </View>
     );

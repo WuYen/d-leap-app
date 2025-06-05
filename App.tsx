@@ -22,6 +22,7 @@ function AppWithState() {
   const { isLoggedIn, isLoading, expoPushToken, setIsLoggedIn } = useAuth();
   const setFavorites = useSetRecoilState(favoritesState);
 
+  console.log('AppWithState isLoggedIn: ', isLoggedIn);
   useEffect(() => {
     const fetchFavorites = async () => {
       if (!isLoggedIn) {
@@ -32,6 +33,7 @@ function AppWithState() {
       setFavorites((prev) => ({ ...prev, loading: true }));
       try {
         const res = await api.get<MyPostHistoricalResponse[]>('/my/posts/favorite');
+
         setFavorites({ posts: res.data, authors: [], loading: false });
       } catch (err) {
         console.error('Fetch favorites failed:', err);
@@ -45,7 +47,7 @@ function AppWithState() {
   if (isLoading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size='large' />
       </View>
     );
   }
@@ -53,7 +55,7 @@ function AppWithState() {
   return (
     <View style={styles.container}>
       {/* 全域操作按鈕 */}
-      <DevPanel onLogout={() => setIsLoggedIn(false)} />
+      {(config.ENV === 'dev' || config.ENV === 'develop') && <DevPanel onLogout={() => setIsLoggedIn(false)} />}
 
       {/* 導航主畫面 */}
       <View style={styles.navigator}>
@@ -142,10 +144,10 @@ function DevPanel({ onLogout }: DevPanelProps) {
   return (
     <View style={styles.globalButtons}>
       <Text>ENV:{config.ENV}</Text>
-      <Button title="登出" onPress={handleLogout} />
-      <Button title="測試Ping" onPress={handlePing} />
-      <Button title="PostDetail" onPress={handleFakePostDetail} />
-      <Button title="AuthorDetail" onPress={handleFakeAuthorDetail} />
+      <Button title='登出' onPress={handleLogout} />
+      <Button title='測試Ping' onPress={handlePing} />
+      <Button title='PostDetail' onPress={handleFakePostDetail} />
+      <Button title='AuthorDetail' onPress={handleFakeAuthorDetail} />
     </View>
   );
 }

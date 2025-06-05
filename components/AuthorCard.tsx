@@ -55,8 +55,8 @@ export default function AuthorCard({ author, onPress, showPosts = true }: Props)
   return (
     <View style={styles.card}>
       <View style={styles.headerRow}>
-        <TouchableOpacity activeOpacity={onPress ? 0.8 : 1} style={styles.card} onPress={onPress}>
-          <Text style={styles.name}>{author.name}</Text>
+        <TouchableOpacity activeOpacity={onPress ? 0.8 : 1} onPress={onPress}>
+          <Text style={[styles.name, !onPress && { textDecorationLine: 'none' }]}>{author.name}</Text>
         </TouchableOpacity>
       </View>
 
@@ -105,7 +105,7 @@ export default function AuthorCard({ author, onPress, showPosts = true }: Props)
           <View style={styles.chevronContainer}>
             <TouchableOpacity onPress={toggleExpand} activeOpacity={0.7}>
               <Animated.View style={{ transform: [{ rotate }] }}>
-                <Ionicons name="chevron-down" size={20} color="#1976d2" />
+                <Ionicons name='chevron-down' size={20} color='#1976d2' />
               </Animated.View>
             </TouchableOpacity>
           </View>

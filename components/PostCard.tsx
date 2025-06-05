@@ -11,7 +11,7 @@ type PostCardProps = {
   showLink?: boolean;
 };
 
-export function PostCard({ post, showBookmark, onPress, showLink }: PostCardProps) {
+export function PostCard({ post, showBookmark = true, onPress, showLink }: PostCardProps) {
   const [isFavorite, toggleFavorite] = useFavorite(post as PostInfo);
 
   return (
@@ -22,7 +22,7 @@ export function PostCard({ post, showBookmark, onPress, showLink }: PostCardProp
         </Text>
         {showBookmark && (
           <TouchableOpacity onPress={toggleFavorite} style={{ padding: 4 }}>
-            <Ionicons name={isFavorite ? 'bookmark' : 'bookmark-outline'} size={22} color="#333" />
+            <Ionicons name={isFavorite ? 'bookmark' : 'bookmark-outline'} size={22} color='#333' />
           </TouchableOpacity>
         )}
       </View>
@@ -78,21 +78,15 @@ function PriceTable({ processedData }: { processedData?: DiffInfo[] }) {
 
   return (
     <View style={styles.priceTable}>
-      <Row label="基準" date={base?.date} price={base?.price} />
+      <Row label='基準' date={base?.date} price={base?.price} />
       <Row
-        label="最高"
+        label='最高'
         date={highest?.date}
         price={highest?.price}
         diff={highest?.diff}
         diffPercent={highest?.diffPercent}
       />
-      <Row
-        label="最近"
-        date={latest?.date}
-        price={latest?.price}
-        diff={latest?.diff}
-        diffPercent={latest?.diffPercent}
-      />
+      <Row label='最近' date={latest?.date} price={latest?.price} diff={latest?.diff} diffPercent={latest?.diffPercent} />
     </View>
   );
 }

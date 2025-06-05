@@ -10,7 +10,7 @@ export default function AuthorListScreen() {
   const navigation = useAuthorNavigation();
   const authorsLoadable = useRecoilValueLoadable(authorsState);
   const refresh = useRecoilRefresher_UNSTABLE(authorsState);
-  
+
   if (authorsLoadable.state === 'loading') {
     return (
       <View style={styles.loader}>
@@ -38,6 +38,7 @@ export default function AuthorListScreen() {
       renderItem={({ item }) => (
         <AuthorCard
           author={item}
+          showPosts={false}
           onPress={() => navigation.navigate(ROUTES.Author.AuthorDetail, { authorId: item.name })}
         />
       )}

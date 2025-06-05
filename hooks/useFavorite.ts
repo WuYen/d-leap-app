@@ -18,14 +18,12 @@ export default function useFavorite(post: FavoritePost) {
 
     try {
       const response = await api.get(`/my/post/${post.id}/favorite`);
-      if (!response.data) {
-        throw new Error('收藏失敗');
-      } else {
-        setFavorites((prevState) => ({
-          ...prevState,
-          posts: prevState.posts.map((p) => (p.id === post.id ? (response.data as any) : p)),
-        }));
-      }
+      console.log('Toggle favorite response:', response);
+
+      setFavorites((prevState) => ({
+        ...prevState,
+        posts: prevState.posts.map((p) => (p.id === post.id ? (response.data as any) : p)),
+      }));
     } catch (error) {
       console.error('Error toggling favorite:', error);
       setFavorites((prev) => ({

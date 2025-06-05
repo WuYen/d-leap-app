@@ -30,21 +30,33 @@ export type ResponseType<T = any> = {
 // ✨ 通用 API 方法
 export const post = async <T = any>(path: string, data?: any): Promise<ResponseType<T>> => {
   const response = await api.post<ResponseType<T>>(path, data);
+  if (response.status !== 200) {
+    throw new Error(response.data?.message || `POST ${path} failed: ${response.status}`);
+  }
   return response.data;
 };
 
 export const get = async <T = any>(path: string, params?: any): Promise<ResponseType<T>> => {
   const response = await api.get<ResponseType<T>>(path, { params });
+  if (response.status !== 200) {
+    throw new Error(response.data?.message || `GET ${path} failed: ${response.status}`);
+  }
   return response.data;
 };
 
 export const put = async <T = any>(path: string, data?: any): Promise<ResponseType<T>> => {
   const response = await api.put<ResponseType<T>>(path, data);
+  if (response.status !== 200) {
+    throw new Error(response.data?.message || `PUT ${path} failed: ${response.status}`);
+  }
   return response.data;
 };
 
 export const del = async <T = any>(path: string): Promise<ResponseType<T>> => {
   const response = await api.delete<ResponseType<T>>(path);
+  if (response.status !== 200) {
+    throw new Error(response.data?.message || `DELETE ${path} failed: ${response.status}`);
+  }
   return response.data;
 };
 

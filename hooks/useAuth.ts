@@ -34,6 +34,7 @@ export function useAuth(): UseAuthResult {
         });
         await localStorage.saveJwtToken(res.data.token);
         setAuth({ isLoggedIn: true, account: savedAccount });
+        console.log('🔐 自動登入成功:', savedAccount);
       } catch (err) {
         console.warn('🔐 自動登入失敗:', err);
       } finally {
@@ -49,7 +50,6 @@ export function useAuth(): UseAuthResult {
     isLoggedIn: auth.isLoggedIn,
     isLoading,
     account: auth.account,
-    setIsLoggedIn: (value: boolean) =>
-      setAuth((prev) => ({ ...prev, isLoggedIn: value })),
+    setIsLoggedIn: (value: boolean) => setAuth((prev) => ({ ...prev, isLoggedIn: value })),
   };
 }

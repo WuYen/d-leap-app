@@ -47,7 +47,7 @@ export default function AuthorDetailScreen() {
   if (loading) {
     return (
       <View style={styles.loader}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size='large' />
         <Text>載入文章中...</Text>
       </View>
     );
@@ -55,7 +55,7 @@ export default function AuthorDetailScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <AuthorCard author={authorData} />
+      <AuthorCard author={authorData} showPosts={false} />
       <Text style={styles.sectionTitle}>近期發文</Text>
       <FlatList
         data={posts}
