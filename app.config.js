@@ -5,7 +5,7 @@ export default {
     // ...其他設定
     android: {
       package: 'com.wuyen.dleap',
-      googleServicesFile: './android/app/google-services.json',
+      googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
     },
     extra: {
       eas: {
