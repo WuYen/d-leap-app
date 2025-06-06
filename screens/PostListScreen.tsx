@@ -23,26 +23,6 @@ export default function PostListScreen() {
   const defaultTag = useRef<'標的' | '全部'>('全部');
   const [activeTag, setActiveTag] = useState<'標的' | '全部'>('全部');
 
-  // 資料載入判斷
-  if (postsLoadable.state === 'loading') {
-    return (
-      <View style={styles.loader}>
-        <ActivityIndicator size="large" />
-        <Text>載入中...</Text>
-      </View>
-    );
-  }
-
-  if (postsLoadable.state === 'hasError') {
-    return (
-      <View style={styles.loader}>
-        <Text>載入失敗，請稍後再試 🙈</Text>
-      </View>
-    );
-  }
-
-  const posts: PostInfo[] = postsLoadable.contents;
-
   // Tag 初始化
   useEffect(() => {
     if (postsLoadable.state === 'hasValue') {
@@ -85,10 +65,10 @@ export default function PostListScreen() {
     if (!filterText) return posts;
     const lower = filterText.toLowerCase();
     return posts.filter((p) => p.title.toLowerCase().includes(lower));
-  }, [posts, filterText]);
+  }, [postsLoadable.contents, filterText]);
 
   // 決定資料來源：有 searchResults 優先用，否則用本地過濾
-  const baseData = filterText === '' ? posts : searchResults ?? filteredPosts;
+  const baseData = filterText === '' ? postsLoadable.contents : searchResults ?? filteredPosts;
 
   // Tag 過濾
   const displayData = useMemo(() => {
@@ -103,6 +83,26 @@ export default function PostListScreen() {
     [navigation]
   );
 
+  // 資料載入判斷
+  if (postsLoadable.state === 'loading') {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size='large' />
+        <Text>載入中...</Text>
+      </View>
+    );
+  }
+
+  if (postsLoadable.state === 'hasError') {
+    return (
+      <View style={styles.loader}>
+        <Text>載入失敗，請稍後再試 🙈</Text>
+      </View>
+    );
+  }
+
+  const posts: PostInfo[] = postsLoadable.contents;
+
   // Tag Button 列表
   const tags = defaultTag.current === '標的' ? ['標的', '全部'] : ['全部'];
 
@@ -110,11 +110,7 @@ export default function PostListScreen() {
     <FlatList
       ListHeaderComponent={
         <View>
-          <SearchBar
-            onDebouncedTextChange={handleDebouncedTextChange}
-            onSearch={handleSearch}
-            loading={searchLoading}
-          />
+          <SearchBar onDebouncedTextChange={handleDebouncedTextChange} onSearch={handleSearch} loading={searchLoading} />
           <View style={styles.tagRow}>
             {tags.map((tag) => (
               <TouchableOpacity
@@ -150,7 +146,7 @@ const styles = StyleSheet.create({
   },
   tagRow: {
     flexDirection: 'row',
-    marginBottom: 12,
+    marginBottom: 8,
   },
   tagButton: {
     paddingVertical: 6,
