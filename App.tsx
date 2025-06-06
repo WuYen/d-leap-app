@@ -21,6 +21,23 @@ export default function App() {
 function AppWithState() {
   const { isLoggedIn, isLoading, expoPushToken, setIsLoggedIn } = useAuth();
   const setFavorites = useSetRecoilState(favoritesState);
+  const [showDevPanel, setShowDevPanel] = React.useState(config.ENV === 'dev' || config.ENV === 'develop');
+  const tapCountRef = React.useRef(0);
+  const tapTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  // 神秘按鈕觸發邏輯
+  const handleSecretTap = () => {
+    if (config.ENV === 'dev' || config.ENV === 'develop') return; // dev 直接顯示
+    tapCountRef.current += 1;
+    if (tapTimeoutRef.current) clearTimeout(tapTimeoutRef.current);
+    tapTimeoutRef.current = setTimeout(() => {
+      tapCountRef.current = 0;
+    }, 2000); // 2 秒內要連點
+    if (tapCountRef.current >= 10) {
+      setShowDevPanel(true);
+      tapCountRef.current = 0;
+    }
+  };
 
   console.log('AppWithState isLoggedIn: ', isLoggedIn);
   useEffect(() => {
@@ -47,15 +64,23 @@ function AppWithState() {
   if (isLoading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size='large' />
+        <ActivityIndicator size="large" />
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
+      {/* 神秘觸發區塊 */}
+      {config.ENV !== 'dev' && config.ENV !== 'develop' && !showDevPanel && (
+        <View style={styles.secretArea}>
+          <Text onPress={handleSecretTap} style={styles.secretButton} accessibilityLabel="dev-panel-trigger">
+            {' '}
+          </Text>
+        </View>
+      )}
       {/* 全域操作按鈕 */}
-      {(config.ENV === 'dev' || config.ENV === 'develop') && <DevPanel onLogout={() => setIsLoggedIn(false)} />}
+      {showDevPanel && <DevPanel onLogout={() => setIsLoggedIn(false)} />}
 
       {/* 導航主畫面 */}
       <View style={styles.navigator}>
@@ -63,12 +88,14 @@ function AppWithState() {
       </View>
 
       {/* 推播 Token 區塊 */}
-      <View style={styles.tokenContainer}>
-        <Text style={styles.label}>Expo Push Token:</Text>
-        <Text selectable style={styles.tokenText}>
-          {expoPushToken || 'Loading.......'}
-        </Text>
-      </View>
+      {showDevPanel && (
+        <View style={styles.tokenContainer}>
+          <Text style={styles.label}>Expo Push Token:</Text>
+          <Text selectable style={styles.tokenText}>
+            {expoPushToken || 'Loading.......'}
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -144,10 +171,10 @@ function DevPanel({ onLogout }: DevPanelProps) {
   return (
     <View style={styles.globalButtons}>
       <Text>ENV:{config.ENV}</Text>
-      <Button title='登出' onPress={handleLogout} />
-      <Button title='測試Ping' onPress={handlePing} />
-      <Button title='PostDetail' onPress={handleFakePostDetail} />
-      <Button title='AuthorDetail' onPress={handleFakeAuthorDetail} />
+      <Button title="登出" onPress={handleLogout} />
+      <Button title="測試Ping" onPress={handlePing} />
+      <Button title="PostDetail" onPress={handleFakePostDetail} />
+      <Button title="AuthorDetail" onPress={handleFakeAuthorDetail} />
     </View>
   );
 }
@@ -182,5 +209,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  secretArea: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: 40,
+    height: 40,
+    zIndex: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  secretButton: {
+    width: 40,
+    height: 40,
+    opacity: 0.01, // 幾乎不可見
+    backgroundColor: 'transparent',
   },
 });

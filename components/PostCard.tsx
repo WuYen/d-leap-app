@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 import { DiffInfo, PostHistoricalResponse, PostInfo, MyPostHistoricalResponse } from '../types';
 import useFavorite from '../hooks/useFavorite';
+import { toYYYYMMDDWithSeparator } from '../utils/datetimeFormatter';
 
 type PostCardProps = {
   post: PostInfo | PostHistoricalResponse | MyPostHistoricalResponse;
@@ -22,14 +23,14 @@ export function PostCard({ post, showBookmark = true, onPress, showLink }: PostC
         </Text>
         {showBookmark && (
           <TouchableOpacity onPress={toggleFavorite} style={{ padding: 4 }}>
-            <Ionicons name={isFavorite ? 'bookmark' : 'bookmark-outline'} size={22} color='#333' />
+            <Ionicons name={isFavorite ? 'bookmark' : 'bookmark-outline'} size={22} color="#333" />
           </TouchableOpacity>
         )}
       </View>
 
       <View style={styles.subRow}>
         <Text style={styles.author}>作者：{post.author}</Text>
-        <Text style={styles.date}>{post.date}</Text>
+        <Text style={styles.date}>{toYYYYMMDDWithSeparator(new Date(post.id * 1000), '-')}</Text>
       </View>
 
       {/* 價格表（只在有 processedData 且 showPriceTable 時顯示） */}
@@ -78,15 +79,21 @@ function PriceTable({ processedData }: { processedData?: DiffInfo[] }) {
 
   return (
     <View style={styles.priceTable}>
-      <Row label='基準' date={base?.date} price={base?.price} />
+      <Row label="基準" date={base?.date ? toYYYYMMDDWithSeparator(base?.date) : '-'} price={base?.price} />
       <Row
-        label='最高'
-        date={highest?.date}
+        label="最高"
+        date={highest?.date ? toYYYYMMDDWithSeparator(highest?.date) : '-'}
         price={highest?.price}
         diff={highest?.diff}
         diffPercent={highest?.diffPercent}
       />
-      <Row label='最近' date={latest?.date} price={latest?.price} diff={latest?.diff} diffPercent={latest?.diffPercent} />
+      <Row
+        label="最近"
+        date={latest?.date ? toYYYYMMDDWithSeparator(latest?.date) : '-'}
+        price={latest?.price}
+        diff={latest?.diff}
+        diffPercent={latest?.diffPercent}
+      />
     </View>
   );
 }
@@ -102,8 +109,17 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
-  headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  title: { fontWeight: 'bold', fontSize: 16, flex: 1, marginRight: 6 },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start', // 讓子元件頂部對齊
+    justifyContent: 'space-between',
+  },
+  title: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    flex: 1,
+    marginRight: 6,
+  },
   subRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 6 },
   author: { fontSize: 14, color: '#555' },
   date: { fontSize: 14, color: '#888' },
@@ -120,7 +136,7 @@ const styles = StyleSheet.create({
 });
 
 const rowStyles = StyleSheet.create({
-  row: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
+  row: { flexDirection: 'row', alignItems: 'center', marginBottom: 4, justifyContent: 'space-between' },
   label: { width: 42, fontWeight: '500', color: '#444' },
   date: { width: 85, fontSize: 13, color: '#888' },
   price: { width: 52, fontSize: 15, fontWeight: 'bold', color: '#222' },
