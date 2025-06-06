@@ -1,10 +1,10 @@
 export default {
   expo: {
-    name: 'd-leap-app',
+    name: 'Monneey',
     slug: 'd-leap-app',
     // ...其他設定
     android: {
-      package: 'com.wuyen.dleap',
+      package: 'com.wuyen.dleapapp',
       googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
     },
     extra: {
