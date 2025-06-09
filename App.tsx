@@ -19,7 +19,7 @@ export default function App() {
 }
 
 function AppWithState() {
-  const { isLoggedIn, isLoading, expoPushToken, setIsLoggedIn } = useAuth();
+  const { isLoggedIn, isLoading, expoPushToken } = useAuth();
   const setFavorites = useSetRecoilState(favoritesState);
   const [showDevPanel, setShowDevPanel] = React.useState(config.ENV === 'dev' || config.ENV === 'develop');
   const tapCountRef = React.useRef(0);
@@ -80,11 +80,11 @@ function AppWithState() {
         </View>
       )}
       {/* 全域操作按鈕 */}
-      {showDevPanel && <DevPanel onLogout={() => setIsLoggedIn(false)} />}
+      {showDevPanel && <DevPanel />}
 
       {/* 導航主畫面 */}
       <View style={styles.navigator}>
-        <AppNavigator isLoggedIn={isLoggedIn} onSetIsLoggedIn={(isLoggedIn: boolean) => setIsLoggedIn(isLoggedIn)} />
+        <AppNavigator isLoggedIn={isLoggedIn} />
       </View>
 
       {/* 推播 Token 區塊 */}
@@ -100,11 +100,7 @@ function AppWithState() {
   );
 }
 
-type DevPanelProps = {
-  onLogout: () => void;
-};
-
-function DevPanel({ onLogout }: DevPanelProps) {
+function DevPanel() {
   const handleLogout = async () => {
     await clearStorage();
     Alert.alert('登出成功');

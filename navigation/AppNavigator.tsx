@@ -17,7 +17,6 @@ const Tab = createBottomTabNavigator<RootTabParamList>();
 
 type Props = {
   isLoggedIn: boolean;
-  onSetIsLoggedIn: (isLoggedIn: boolean) => void;
 };
 
 const MainTabs = () => (
@@ -49,16 +48,14 @@ const MainTabs = () => (
   </Tab.Navigator>
 );
 
-export default function AppNavigator({ isLoggedIn, onSetIsLoggedIn }: Props) {
+export default function AppNavigator({ isLoggedIn }: Props) {
   return (
     <NavigationContainer ref={navigationRef}>
       <RootStack.Navigator screenOptions={{ headerShown: false }}>
         {isLoggedIn ? (
           <RootStack.Screen name={ROUTES.Root.MainTabs} component={MainTabs} />
         ) : (
-          <RootStack.Screen name={ROUTES.Root.Register}>
-            {(props) => <RegisterScreen {...props} onSetIsLoggedIn={onSetIsLoggedIn} />}
-          </RootStack.Screen>
+          <RootStack.Screen name={ROUTES.Root.Register} component={RegisterScreen} />
         )}
       </RootStack.Navigator>
     </NavigationContainer>
