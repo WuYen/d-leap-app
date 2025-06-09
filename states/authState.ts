@@ -18,19 +18,9 @@ export const authState = atom<AuthState>({
   },
   effects_UNSTABLE: [
     ({ setSelf, onSet }) => {
-      (async () => {
-        const account = await localStorage.getAccount();
-        account &&
-          setSelf({
-            isLoggedIn: false,
-            account,
-            token: null,
-            isLoading: true,
-          });
-      })();
-
-      // 同步 localStorage 寫入
       onSet((newValue) => {
+        console.log('Sync authState to localStorage:', newValue);
+
         localStorage.saveJwtToken(newValue.token ?? '');
         localStorage.saveAccount(newValue.account ?? '');
       });

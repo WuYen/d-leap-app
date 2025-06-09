@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
+import * as localStorage from '../utils/storage';
 import api from '../utils/api';
 import { usePushNotifications } from './usePushNotifications';
 import { authState } from '../states/authState';
@@ -17,14 +18,8 @@ export function useAuth(): UseAuthResult {
 
   // 自動登入流程
   useEffect(() => {
-    const autoLogin = async () => {
-      const account = auth.account;
-      if (!account) {
-        setAuth({ isLoggedIn: false, account: null, isLoading: false, token: null });
-        console.log('🔐 無法登入，未找到帳號');
-        return;
-      }
-
+    const autoLogin = async (account: string) => {
+      console.log('autoLogin account:', account);
       try {
         const res = await api.post<{ token: string }>('/login/expo', {
           account: account,
@@ -39,8 +34,25 @@ export function useAuth(): UseAuthResult {
       }
     };
 
-    autoLogin();
-  }, [expoPushToken, auth.account, setAuth]);
+    const getStoredAccount = async () => {
+      const storedAccount = await localStorage.getAccount();
+      return storedAccount;
+    };
+
+    console.log('autoLogin effect', auth);
+    if (!auth.isLoggedIn) {
+      getStoredAccount().then((storedAccount) => {
+        const account = storedAccount || auth.account;
+        if (account) {
+          autoLogin(account);
+        } else {
+          setAuth({ isLoggedIn: false, account: null, isLoading: false, token: null });
+          console.log('🔐 無法登入，未找到帳號');
+          return;
+        }
+      });
+    }
+  }, [expoPushToken, auth.account, auth.isLoggedIn, setAuth]);
 
   return {
     expoPushToken,

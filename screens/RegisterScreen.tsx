@@ -20,8 +20,9 @@ export default function RegisterScreen() {
       Alert.alert('註冊成功！');
       // update account will trigger useAuth hook login flow
       setAuth((prev) => ({ ...prev, isLoading: true, account }));
-    } catch {
+    } catch (ex) {
       Alert.alert('錯誤', '註冊失敗');
+      console.error('Register error:', ex);
       setAuth({ isLoggedIn: false, account: '', isLoading: false, token: '' });
     }
   };
@@ -29,12 +30,12 @@ export default function RegisterScreen() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', padding: 20 }}>
       <TextInput
-        placeholder="輸入帳號"
+        placeholder='輸入帳號'
         value={account}
         onChangeText={setAccount}
         style={{ borderBottomWidth: 1, marginBottom: 20 }}
       />
-      <Button title="註冊並登入" onPress={handleRegister} />
+      <Button title='註冊並登入' onPress={handleRegister} />
     </View>
   );
 }
