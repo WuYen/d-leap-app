@@ -1,10 +1,11 @@
 // screens/SettingScreen.tsx
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { usePushNotifications } from '../hooks/usePushNotifications';
+import { useRecoilValue } from 'recoil';
+import { pushTokenState } from '../states/pushNotificationState';
 
 export default function SettingScreen() {
-  const { expoPushToken } = usePushNotifications();
+  const expoPushToken = useRecoilValue(pushTokenState);
 
   return (
     <View style={styles.container}>

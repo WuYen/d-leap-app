@@ -2,14 +2,14 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Alert } from 'react-native';
 import api from '../utils/api';
-import { usePushNotifications } from '../hooks/usePushNotifications';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { authState } from '../states/authState';
+import { pushTokenState } from '../states/pushNotificationState';
 
 export default function RegisterScreen() {
   //TODO: 試著從 localStorage 取得帳號，若有則自動填入
   const [account, setAccount] = useState('');
-  const { expoPushToken } = usePushNotifications();
+  const expoPushToken = useRecoilValue(pushTokenState);
   const [, setAuth] = useRecoilState(authState);
 
   const handleRegister = async () => {
@@ -30,12 +30,12 @@ export default function RegisterScreen() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', padding: 20 }}>
       <TextInput
-        placeholder='輸入帳號'
+        placeholder="輸入帳號"
         value={account}
         onChangeText={setAccount}
         style={{ borderBottomWidth: 1, marginBottom: 20 }}
       />
-      <Button title='註冊並登入' onPress={handleRegister} />
+      <Button title="註冊並登入" onPress={handleRegister} />
     </View>
   );
 }

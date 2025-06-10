@@ -1,16 +1,18 @@
 // src/hooks/usePushNotifications.ts
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 import { navigateToAuthorDetail } from '../navigation/navigationRef';
 import { PostInfo } from '../types';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { lastNotificationState, pushTokenState } from '../states/pushNotificationState';
 
 // https://docs.expo.dev/versions/latest/sdk/notifications/
 export function usePushNotifications() {
-  const [expoPushToken, setExpoPushToken] = useState<string | null>(null);
-  const [notification, setNotification] = useState<Notifications.Notification | null>(null);
+  const [expoPushToken, setExpoPushToken] = useRecoilState(pushTokenState);
+  const setNotification = useSetRecoilState(lastNotificationState);
 
   const notificationListener = useRef<Notifications.EventSubscription>();
   const responseListener = useRef<Notifications.EventSubscription>();
@@ -51,11 +53,10 @@ export function usePushNotifications() {
       notificationListener.current?.remove();
       responseListener.current?.remove();
     };
-  }, []);
+  }, [setExpoPushToken, setNotification]);
 
   return {
     expoPushToken,
-    notification,
   };
 }
 
