@@ -50,7 +50,7 @@ export function useAuth(): UseAuthResult {
       }
     };
 
-    console.log('autoLogin effect', auth);
+    console.log('autoLogin effect', auth, expoPushToken);
     initLogin();
   }, [expoPushToken, auth.account, auth.isLoggedIn, setAuth]);
 

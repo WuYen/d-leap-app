@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Text, StyleSheet, TouchableOpacity, Button } from 'react-native';
+import { View, TextInput, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 export type SearchBarProps = {
   onDebouncedTextChange?: (text: string) => void;
   onSearch?: (text: string) => void;
   loading?: boolean;
+  placeholder: string;
 };
 
-export default function SearchBar({ onDebouncedTextChange, onSearch, loading }: SearchBarProps) {
+export default function SearchBar({ onDebouncedTextChange, onSearch, loading, placeholder }: SearchBarProps) {
   const [text, setText] = useState('');
 
   useEffect(() => {
@@ -30,15 +32,21 @@ export default function SearchBar({ onDebouncedTextChange, onSearch, loading }: 
 
   return (
     <View style={styles.row}>
-      <TextInput
-        placeholder='搜尋文章標題'
-        value={text}
-        onChangeText={handleChangeText}
-        style={styles.input}
-        returnKeyType='search'
-        onSubmitEditing={handleSearchPress}
-      />
-      {/* <Button title='搜尋' onPress={handleSearchPress} disabled={loading} /> */}
+      <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+        <TextInput
+          placeholder={placeholder}
+          value={text}
+          onChangeText={handleChangeText}
+          style={styles.input}
+          returnKeyType='search'
+          onSubmitEditing={handleSearchPress}
+        />
+        {!!text && (
+          <TouchableOpacity style={styles.clearBtn} onPress={() => setText('')} activeOpacity={0.7}>
+            <Ionicons name='close-circle' size={20} color='#bbb' />
+          </TouchableOpacity>
+        )}
+      </View>
       <TouchableOpacity
         style={[styles.button, loading && { opacity: 0.5 }]}
         onPress={handleSearchPress}
@@ -72,5 +80,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 14,
+  },
+  clearBtn: {
+    position: 'absolute',
+    right: 12,
+    zIndex: 1,
+    padding: 2,
   },
 });

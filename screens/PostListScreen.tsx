@@ -110,7 +110,12 @@ export default function PostListScreen() {
     <FlatList
       ListHeaderComponent={
         <View>
-          <SearchBar onDebouncedTextChange={handleDebouncedTextChange} onSearch={handleSearch} loading={searchLoading} />
+          <SearchBar
+            placeholder='搜尋文章標題'
+            onDebouncedTextChange={handleDebouncedTextChange}
+            onSearch={handleSearch}
+            loading={searchLoading}
+          />
           <View style={styles.tagRow}>
             {tags.map((tag) => (
               <TouchableOpacity

@@ -5,11 +5,22 @@ import AuthorCard from '../components/AuthorCard';
 import { ROUTES, useAuthorNavigation } from '../navigation';
 import { useRecoilRefresher_UNSTABLE, useRecoilValueLoadable } from 'recoil';
 import { authorsState } from '../states/authorsState';
+import SearchBar from '../components/SearchBar';
+import { LeaderboardItem } from '../types';
 
 export default function AuthorListScreen() {
   const navigation = useAuthorNavigation();
   const authorsLoadable = useRecoilValueLoadable(authorsState);
   const refresh = useRecoilRefresher_UNSTABLE(authorsState);
+  const [search, setSearch] = React.useState('');
+
+  const data = authorsLoadable.contents as LeaderboardItem[];
+
+  // filter authors by search
+  const filteredData = React.useMemo(() => {
+    if (!search) return data;
+    return data.filter((item) => item.name.toLowerCase().includes(search.toLowerCase()));
+  }, [data, search]);
 
   if (authorsLoadable.state === 'loading') {
     return (
@@ -28,12 +39,22 @@ export default function AuthorListScreen() {
     );
   }
 
-  const data = authorsLoadable.contents;
-
   return (
     <FlatList
+      ListHeaderComponent={
+        <View>
+          <SearchBar
+            placeholder='搜尋作者'
+            onDebouncedTextChange={setSearch}
+            loading={authorsLoadable.state === ('loading' as any)}
+            onSearch={(text) => {
+              console.log('Search text:', text);
+            }}
+          />
+        </View>
+      }
       contentContainerStyle={styles.container}
-      data={data}
+      data={filteredData}
       keyExtractor={(item) => item.name}
       renderItem={({ item }) => (
         <AuthorCard
