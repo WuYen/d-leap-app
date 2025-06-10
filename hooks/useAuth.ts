@@ -34,24 +34,24 @@ export function useAuth(): UseAuthResult {
       }
     };
 
-    const getStoredAccount = async () => {
+    const initLogin = async () => {
+      if (auth.isLoggedIn || !expoPushToken) {
+        return;
+      }
+
       const storedAccount = await localStorage.getAccount();
-      return storedAccount;
+      const account = auth.account || storedAccount;
+
+      if (account) {
+        autoLogin(account);
+      } else {
+        setAuth({ isLoggedIn: false, account: null, isLoading: false, token: null });
+        console.log('🔐 無法登入，未找到帳號');
+      }
     };
 
     console.log('autoLogin effect', auth);
-    if (!auth.isLoggedIn) {
-      getStoredAccount().then((storedAccount) => {
-        const account = storedAccount || auth.account;
-        if (account) {
-          autoLogin(account);
-        } else {
-          setAuth({ isLoggedIn: false, account: null, isLoading: false, token: null });
-          console.log('🔐 無法登入，未找到帳號');
-          return;
-        }
-      });
-    }
+    initLogin();
   }, [expoPushToken, auth.account, auth.isLoggedIn, setAuth]);
 
   return {
