@@ -31,6 +31,11 @@ export default function FavoriteListScreen() {
       //TODO: 這裡可以加上下拉刷新功能
       //refreshing={loading}
       //onRefresh={loadFavorites}
+      ListEmptyComponent={
+        <View style={{ alignItems: 'center', marginTop: 32 }}>
+          <Text>目前沒有符合條件的貼文喔</Text>
+        </View>
+      }
     />
   );
 }
