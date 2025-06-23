@@ -11,6 +11,8 @@ import PostStack from './stack/PostStack';
 import FavoriteStack from './stack/FavoriteStack';
 import AuthorStack from './stack/AuthorStack';
 import { navigationRef } from './navigationRef';
+import { useSetRecoilState } from 'recoil';
+import { navigationReadyState } from '../states/navigationState';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabParamList>();
@@ -49,8 +51,13 @@ const MainTabs = () => (
 );
 
 export default function AppNavigator({ isLoggedIn }: Props) {
+  const setNavigationReady = useSetRecoilState(navigationReadyState);
+
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer
+      ref={navigationRef}
+      onReady={() => setNavigationReady(true)}
+    >
       <RootStack.Navigator screenOptions={{ headerShown: false }}>
         {isLoggedIn ? (
           <RootStack.Screen name={ROUTES.Root.MainTabs} component={MainTabs} />

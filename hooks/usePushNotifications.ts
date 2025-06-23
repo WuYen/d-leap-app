@@ -6,15 +6,21 @@ import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 import { navigationRef, navigateToAuthorDetail } from '../navigation/navigationRef';
 import { PostInfo } from '../types';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { lastNotificationState, pushTokenState } from '../states/pushNotificationState';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  lastNotificationState,
+  pushTokenState,
+  pendingAuthorState,
+} from '../states/pushNotificationState';
+import { navigationReadyState } from '../states/navigationState';
 
-let pendingAuthor: any = null; // 全域暫存
 
 // https://docs.expo.dev/versions/latest/sdk/notifications/
 export function usePushNotifications() {
   const [expoPushToken, setExpoPushToken] = useRecoilState(pushTokenState);
   const setNotification = useSetRecoilState(lastNotificationState);
+  const [pendingAuthor, setPendingAuthor] = useRecoilState(pendingAuthorState);
+  const navigationReady = useRecoilValue(navigationReadyState);
 
   const notificationListener = useRef<Notifications.EventSubscription>();
   const responseListener = useRef<Notifications.EventSubscription>();
@@ -49,16 +55,8 @@ export function usePushNotifications() {
         if (navigationRef.isReady()) {
           navigateToAuthorDetail(post.author);
         } else {
-          pendingAuthor = post.author;
+          setPendingAuthor(post.author);
         }
-      }
-    });
-
-    // 監聽 navigation ready
-    const unsubscribe = navigationRef.addListener?.('state', () => {
-      if (navigationRef.isReady() && pendingAuthor) {
-        navigateToAuthorDetail(pendingAuthor);
-        pendingAuthor = null;
       }
     });
 
@@ -66,9 +64,16 @@ export function usePushNotifications() {
       // 移除監聽器
       notificationListener.current?.remove();
       responseListener.current?.remove();
-      unsubscribe?.();
     };
-  }, [setExpoPushToken, setNotification]);
+  }, [setExpoPushToken, setNotification, setPendingAuthor]);
+
+  // 在導航就緒且存在待處理作者時進行跳轉
+  useEffect(() => {
+    if (navigationReady && pendingAuthor && navigationRef.isReady()) {
+      navigateToAuthorDetail(pendingAuthor);
+      setPendingAuthor(null);
+    }
+  }, [navigationReady, pendingAuthor, setPendingAuthor]);
 
   return {
     expoPushToken,
