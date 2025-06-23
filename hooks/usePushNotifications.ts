@@ -4,10 +4,12 @@ import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
-import { navigateToAuthorDetail } from '../navigation/navigationRef';
+import { navigationRef, navigateToAuthorDetail } from '../navigation/navigationRef';
 import { PostInfo } from '../types';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { lastNotificationState, pushTokenState } from '../states/pushNotificationState';
+
+let pendingAuthor: any = null; // 全域暫存
 
 // https://docs.expo.dev/versions/latest/sdk/notifications/
 export function usePushNotifications() {
@@ -44,7 +46,19 @@ export function usePushNotifications() {
       console.log('使用者互動的通知：', response);
       const post = response.notification.request.content.data.post as PostInfo;
       if (post) {
-        navigateToAuthorDetail(post.author);
+        if (navigationRef.isReady()) {
+          navigateToAuthorDetail(post.author);
+        } else {
+          pendingAuthor = post.author;
+        }
+      }
+    });
+
+    // 監聽 navigation ready
+    const unsubscribe = navigationRef.addListener?.('state', () => {
+      if (navigationRef.isReady() && pendingAuthor) {
+        navigateToAuthorDetail(pendingAuthor);
+        pendingAuthor = null;
       }
     });
 
@@ -52,6 +66,7 @@ export function usePushNotifications() {
       // 移除監聽器
       notificationListener.current?.remove();
       responseListener.current?.remove();
+      unsubscribe?.();
     };
   }, [setExpoPushToken, setNotification]);
 
