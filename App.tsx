@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Alert, Button, ActivityIndicator } from 'react-native';
 import AppNavigator from './navigation/AppNavigator';
 import { navigateToAuthorDetail, navigateToPostDetail, navigationRef } from './navigation/navigationRef';
+import PendingAuthorNavigator from './components/PendingAuthorNavigator';
 import api from './utils/api';
 import { clearStorage } from './utils/storage';
 import { useAuth } from './hooks/useAuth';
@@ -85,6 +86,7 @@ function AppWithState() {
       {/* 導航主畫面 */}
       <View style={styles.navigator}>
         <AppNavigator isLoggedIn={isLoggedIn} />
+        <PendingAuthorNavigator />
       </View>
 
       {/* 推播 Token 區塊 */}
